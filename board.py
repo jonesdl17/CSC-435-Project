@@ -1,7 +1,7 @@
 import pygame
 
 def build_game_board(width, height):
-    screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
+    screen = pygame.display.set_mode((width, height))
     pygame.display.init()
     pygame.display.set_caption("Chess")
     pygame.display.get_surface().fill((255,255,255))
@@ -15,15 +15,16 @@ def build_game_board(width, height):
             isWhite = not isWhite
         isWhite = not isWhite
 
-    pygame.display.update()
+    pygame.display.update() 
 
 build_game_board(600, 600)
 
 blnExitGame = False
 while not blnExitGame:
-    event = pygame.event.wait()
-    if event.type == pygame.QUIT:
-        blnExitGame = True
-    elif event.type == pygame.VIDEORESIZE:
-        width, height = pygame.display.get_window_size()
-        build_game_board(width, height)
+    #event = pygame.event.wait()
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            blnExitGame = True
+        elif event.type == pygame.VIDEORESIZE:
+            width, height = pygame.display.get_window_size()
+            build_game_board(width, height)
