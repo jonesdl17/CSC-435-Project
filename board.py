@@ -4,6 +4,7 @@ screen = 0
 width = 600
 height = 600
 king_piece = 0
+king_piece_rect = None
 board_image = 0
 image_width = int(width/8)
 image_height = int(height/8)
@@ -23,26 +24,27 @@ def draw_board():
     pygame.display.update() 
 
 def draw_pieces(x = 0, y = 0):
-    global king_piece, board, screen
+    global king_piece, board, screen, king_piece_rect
     board[0][0] = King("King")
     king_piece = pygame.image.load(board[0][0].image)
 
     king_piece = pygame.transform.smoothscale(king_piece, (image_width, image_height))
-    screen.blit(king_piece, (x, y))
+    king_piece_rect = screen.blit(king_piece, (x, y))
     pygame.display.update()
 
 def update_king(x, y):
-    global king_piece, board, screen
+    global king_piece, board, screen, king_piece_rect
     screen.blit(board_image, (0, 0))
-    screen.blit(king_piece, (x, y))
+    king_piece_rect = screen.blit(king_piece, (x, y))
     pygame.display.update()
 
 def move_piece():
-    global screen, board
+    global screen, board, king_piece
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
     drag = 0
-    if click[0] == 1 and king_piece.get_rect().collidepoint((mouse[0], mouse[1])):
+
+    if click[0] == 1 and king_piece_rect.collidepoint((mouse[0], mouse[1])):
         update_king(mouse[0] - image_width/2, mouse[1] - image_height/2)
 
 draw_board()
