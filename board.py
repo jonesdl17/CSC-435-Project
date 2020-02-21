@@ -1,5 +1,6 @@
 import pygame
 from Piece import *
+from Square import *
 screen = 0
 width = 600
 height = 600
@@ -47,8 +48,20 @@ def move_piece():
     if click[0] == 1 and king_piece_rect.collidepoint((mouse[0], mouse[1])):
         update_king(mouse[0] - image_width/2, mouse[1] - image_height/2)
 
+def createSquares():
+    i = 0
+    for row in range(8):
+        for col in range(8):
+            board[col][row] = Square(col , row)
 draw_board()
 draw_pieces()
+createSquares()
+
+
+
+
+            
+
 
 blnExitGame = False
 while not blnExitGame:

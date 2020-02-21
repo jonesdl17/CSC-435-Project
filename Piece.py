@@ -1,9 +1,10 @@
 import pygame
 #I think it oragnizes the pieces better, so we don't have to import a ton of imports on board
-#true = white pieces, False = Black pieces
+#1 = white pieces, -1 = Black pieces
 
 class Piece:
     imageSize = [75,75]
+    
     def __init__(self, name):
         self.name = name
 
