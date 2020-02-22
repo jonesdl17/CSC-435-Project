@@ -3,7 +3,8 @@ import pygame
 #1 = white pieces, -1 = Black pieces
 
 class Piece:
-    imageSize = [75,75]
+    imageSize = [75,75] 
+
     
     def __init__(self, name):
         self.name = name
