@@ -1,22 +1,26 @@
 import pygame
-
+width = 600
+height = 600
+border_distance_x = 32
+border_distance_y = 35
+image_width = int((width - border_distance_x * 2)/8)
+image_height = int((height - border_distance_y * 2)/8)
 #to create individual squares with own coordiantes, to if it has a piece, and the piece color and piece
 class Square():
-    xAxis = 0
-    yAxis = 0
     col = 0
     row = 0
+    xAxis = 0
+    yAxis = 0
     coordianates = 0
     hasPiece = False
     pieceColor = 0
-    piece = 0
+    piece = None
 
 #constructor creates coordianates, piece attributes are defaulted to none
-###############currently prints coordiantes(debugging purpose, delete later)
+
     def __init__(self, col, row):
-        self.xAxis = 600/8 * row
-        self.yAxis = 600/8 * col
-        print(self.xAxis, self.yAxis)
+        self.xAxis = col * image_width + border_distance_x
+        self.yAxis = row * image_height + border_distance_y
         self.coordianates = (self.xAxis, self.yAxis)
 
 #getter for coordiantes
@@ -30,7 +34,7 @@ class Square():
     def changeHasPiece(self, piece):
         if(self.hasPiece == True):
             self.hasPiece = False
-            self.piece = 0
+            self.piece = None
             self.pieceColor = 0
         else:
             self.hasPiece = True
