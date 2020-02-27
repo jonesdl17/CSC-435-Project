@@ -63,8 +63,40 @@ def convert_x_y_to_col_row(x, y):
 
 def init_pieces():
     global board
-    board[0][0].changeHasPiece(King())
-    board[0][1].changeHasPiece(King())
+    #initialize white pieces
+    board[0][0].changeHasPiece(Rook(1))
+    board[1][0].changeHasPiece(Knight(1))
+    board[2][0].changeHasPiece(Bishop(1))
+    board[3][0].changeHasPiece(Queen(1))
+    board[4][0].changeHasPiece(King(1))
+    board[5][0].changeHasPiece(Bishop(1))
+    board[6][0].changeHasPiece(Knight(1))
+    board[7][0].changeHasPiece(Rook(1))
+    board[0][1].changeHasPiece(Pawn(1))
+    board[1][1].changeHasPiece(Pawn(1))
+    board[2][1].changeHasPiece(Pawn(1))
+    board[3][1].changeHasPiece(Pawn(1))
+    board[4][1].changeHasPiece(Pawn(1))
+    board[5][1].changeHasPiece(Pawn(1))
+    board[6][1].changeHasPiece(Pawn(1))
+    board[7][1].changeHasPiece(Pawn(1))
+    #initialize black pieces
+    board[0][7].changeHasPiece(Rook(0))
+    board[1][7].changeHasPiece(Knight(0))
+    board[2][7].changeHasPiece(Bishop(0))
+    board[3][7].changeHasPiece(Queen(0))
+    board[4][7].changeHasPiece(King(0))
+    board[5][7].changeHasPiece(Bishop(0))
+    board[6][7].changeHasPiece(Knight(0))
+    board[7][7].changeHasPiece(Rook(0))
+    board[0][6].changeHasPiece(Pawn(0))
+    board[1][6].changeHasPiece(Pawn(0))
+    board[2][6].changeHasPiece(Pawn(0))
+    board[3][6].changeHasPiece(Pawn(0))
+    board[4][6].changeHasPiece(Pawn(0))
+    board[5][6].changeHasPiece(Pawn(0))
+    board[6][6].changeHasPiece(Pawn(0))
+    board[7][6].changeHasPiece(Pawn(0))
     update_board()
 
 def update_board():
@@ -98,18 +130,26 @@ def place_piece(target_col, target_row):
     update_board()
 
 def handle_click():
-    global selected
+    global selected, source_col, source_row
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
     if click[0] == 1:
         col, row = convert_x_y_to_col_row(mouse[0], mouse[1])
         has_piece = board[col][row].piece != None
-        if has_piece:
+
+        if has_piece and not selected:
             selected = True
             select(col, row)
         elif not has_piece and selected:
             selected = False
             place_piece(col, row)
+        elif selected and row == source_row and col == source_col:
+            selected = False
+            update_board()
+        elif has_piece:
+            update_board()
+            selected = True
+            select(col, row)
 
 init_board()
 
