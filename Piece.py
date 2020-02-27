@@ -8,35 +8,38 @@ class Piece:
     def __init__(self, name):
         self.name = name
 
+    def getColor(self):
+        return 0
+
 class King(Piece):
-    def __init__(self, name):
+    def __init__(self):
         super().__init__("King")
         self.image = "./King.png"
        
 
 class Queen(Piece):
-    def __init__(self, name):
+    def __init__(self):
         super().__init__("Queen")
         self.image = "./Queen.png"
        
 
 class Knight(Piece):
-    def __init__(self, name):
+    def __init__(self):
         super().__init__("Knight")
         self.image = "./Knight.png"
        
 
 class Bishop(Piece):
-    def __init__(self, name):
+    def __init__(self):
         super().__init__("Bishop")
         self.image = "./Bishop.png"
 
 class Rook(Piece):
-    def __init__(self, name):
+    def __init__(self):
         super().__init__("Rook")
         self.image = "./Rook.png"
 
 class Pawn(Piece):
-    def __init__(self, name):
+    def __init__(self):
         super().__init__("Pawn")
         self.image = "./Pawn.png"
