@@ -1,6 +1,7 @@
 import pygame
 from Piece import *
 from Square import *
+from moves import *
 screen = None
 board_image = None
 width = 600
@@ -124,10 +125,26 @@ def select(col, row):
     pygame.display.update()
 
 def place_piece(target_col, target_row):
-    global source_col, source_row
-    board[target_col][target_row].piece = board[source_col][source_row].piece
-    board[source_col][source_row].piece = None
-    update_board()
+    global source_col, source_row, selected
+    if board[source_col][source_row].piece.name == "Pawn":
+        if is_valid_move_pawn(board, (source_col, source_row), (target_col, target_row)):
+            board[target_col][target_row].piece = board[source_col][source_row].piece
+            board[source_col][source_row].piece = None
+            update_board()
+        else:
+            update_board()
+    elif board[source_col][source_row].piece.name == "Rook":
+        if is_valid_move_rook(board, (source_col, source_row), (target_col, target_row)):
+            board[target_col][target_row].piece = board[source_col][source_row].piece
+            board[source_col][source_row].piece = None
+            update_board()
+        else:
+            update_board()
+    else:
+        board[target_col][target_row].piece = board[source_col][source_row].piece
+        board[source_col][source_row].piece = None
+        update_board()
+    
 
 def handle_click():
     global selected, source_col, source_row
