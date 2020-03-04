@@ -32,19 +32,17 @@ def is_valid_move_bishop(board, source_tuple, target_tuple):
     is_in_board = target_tuple[0] < 8 and target_tuple[0] >= 0 and target_tuple[1] < 8 and target_tuple[1] >= 0 
     if abs(target_tuple[0] - source_tuple[0]) == abs(target_tuple[1] - source_tuple[1]):
         is_valid = True
-        multiplier = -1 if source_tuple[0] > target_tuple[0] else 1
-        col = source_tuple[0]
         if source_tuple[1] < target_tuple[1]:
+            multiplier = -1 if source_tuple[0] > target_tuple[0] else 1
+            col = source_tuple[0]
             for i in range(source_tuple[1] + 1, target_tuple[1]):
                 col += 1 * multiplier
-                if board[col][i].piece != None:
-                    print(col, i)
                 is_valid = is_valid and (board[col][i].piece == None)
         else:
+            multiplier = -1 if source_tuple[0] < target_tuple[0] else 1
+            col = target_tuple[0]
             for i in range(target_tuple[1] + 1, source_tuple[1]):
                 col += 1 * multiplier
-                if board[col][i].piece != None:
-                    print(col, i)
                 is_valid = is_valid and (board[col][i].piece == None)
     return is_valid
 
@@ -91,14 +89,16 @@ def is_valid_move_queen(board, source_tuple, target_tuple):
     
     if abs(target_tuple[0] - source_tuple[0]) == abs(target_tuple[1] - source_tuple[1]):
         is_valid = True
-        multiplier = -1 if source_tuple[0] > target_tuple[0] else 1
-        col = source_tuple[0]
         if source_tuple[1] < target_tuple[1]:
-            for i in range(source_tuple[1] + 1, target_tuple[1] + 1):
+            multiplier = -1 if source_tuple[0] > target_tuple[0] else 1
+            col = source_tuple[0]
+            for i in range(source_tuple[1] + 1, target_tuple[1]):
                 col += 1 * multiplier
                 is_valid = is_valid and (board[col][i].piece == None)
         else:
-            for i in range(target_tuple[1] + 1, source_tuple[1] + 1):
+            multiplier = -1 if source_tuple[0] < target_tuple[0] else 1
+            col = target_tuple[0]
+            for i in range(target_tuple[1] + 1, source_tuple[1]):
                 col += 1 * multiplier
                 is_valid = is_valid and (board[col][i].piece == None)
     return is_valid
