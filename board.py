@@ -1,7 +1,13 @@
 import pygame
 from Piece import *
 from Square import *
+<<<<<<< HEAD
 screen = 0
+=======
+from moves import *
+screen = None
+board_image = None
+>>>>>>> b06a52c96d7cfb35af73d602e10aaf6fed27fe82
 width = 600
 height = 600
 king_piece = 0
@@ -58,6 +64,30 @@ draw_pieces()
 createSquares()
 
 
+<<<<<<< HEAD
+=======
+def place_piece(target_col, target_row):
+    global source_col, source_row, selected
+    if board[source_col][source_row].piece.name == "Pawn":
+        if is_valid_move_pawn(board, (source_col, source_row), (target_col, target_row)):
+            board[target_col][target_row].piece = board[source_col][source_row].piece
+            board[source_col][source_row].piece = None
+            update_board()
+        else:
+            update_board()
+    elif board[source_col][source_row].piece.name == "Rook":
+        if is_valid_move_rook(board, (source_col, source_row), (target_col, target_row)):
+            board[target_col][target_row].piece = board[source_col][source_row].piece
+            board[source_col][source_row].piece = None
+            update_board()
+        else:
+            update_board()
+    else:
+        board[target_col][target_row].piece = board[source_col][source_row].piece
+        board[source_col][source_row].piece = None
+        update_board()
+    
+>>>>>>> b06a52c96d7cfb35af73d602e10aaf6fed27fe82
 
 
             
