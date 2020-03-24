@@ -2,7 +2,6 @@ import pygame
 from Piece import *
 from Square import *
 from moves import *
-from find_valid_moves import *
 screen = None
 board_image = None
 width = 600
@@ -16,6 +15,8 @@ image_height = int((height - border_distance_y * 2)/8)
 selected = False
 source_col = 0
 source_row = 0
+color = 0
+other_color = 0
 
 
 
@@ -25,7 +26,20 @@ for i in range(8):
     board.append([0] * 8)
 
 
+def init_game(gameMode):
+    global color, other_color
+    from client import get_color
+    color = get_color(gameMode)
+    other_color = 0 if color == 1 else 1  
+    init_board()  
 
+    blnExitGame = False
+    while not blnExitGame:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                blnExitGame = True
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                handle_click()
 
 def init_board():
     global screen, image_width, image_height, board_image
@@ -130,48 +144,54 @@ def find_valid_move_rook():
     source_tuple = (source_col, source_row)
     is_valid = True
     for i in range (source_row + 1, 8):
-        is_valid = is_valid and (board[source_tuple[0]][i].piece == None or board[source_tuple[0]][i].piece.color == 0)
+        is_valid = is_valid and (board[source_tuple[0]][i].piece == None or board[source_tuple[0]][i].piece.color == other_color)
         if is_valid:
             x, y = board[source_tuple[0]][i].getCoord()
             rec = pygame.Rect(x, y, image_width, image_height)
             pygame.draw.rect(screen, (0, 0, 255), rec, 1)
-        if board[source_tuple[0]][i].piece != None and board[source_tuple[0]][i].piece.color == 0:
+        if board[source_tuple[0]][i].piece != None and board[source_tuple[0]][i].piece.color == other_color:
             is_valid = False
     is_valid = True
     for i in range (source_row - 1, -1, -1):
-        is_valid = is_valid and (board[source_tuple[0]][i].piece == None or board[source_tuple[0]][i].piece.color == 0)
+        is_valid = is_valid and (board[source_tuple[0]][i].piece == None or board[source_tuple[0]][i].piece.color == other_color)
         if is_valid:
             x, y = board[source_tuple[0]][i].getCoord()
             rec = pygame.Rect(x, y, image_width, image_height)
             pygame.draw.rect(screen, (0, 0, 255), rec, 1)
-        if board[source_tuple[0]][i].piece != None and board[source_tuple[0]][i].piece.color == 0:
+        if board[source_tuple[0]][i].piece != None and board[source_tuple[0]][i].piece.color == other_color:
             is_valid = False
     is_valid = True
     for i in range (source_col + 1, 8):
-        is_valid = is_valid and (board[i][source_tuple[1]].piece == None or board[i][source_tuple[1]].piece.color == 0)
+        is_valid = is_valid and (board[i][source_tuple[1]].piece == None or board[i][source_tuple[1]].piece.color == other_color)
         if is_valid:
             x, y = board[i][source_tuple[1]].getCoord()
             rec = pygame.Rect(x, y, image_width, image_height)
             pygame.draw.rect(screen, (0, 0, 255), rec, 1)
-        if board[i][source_tuple[1]].piece != None and board[i][source_tuple[1]].piece.color == 0:
+        if board[i][source_tuple[1]].piece != None and board[i][source_tuple[1]].piece.color == other_color:
             is_valid = False
     is_valid = True
     for i in range (source_col - 1, -1, -1):
-        is_valid = is_valid and (board[i][source_tuple[1]].piece == None or board[i][source_tuple[1]].piece.color == 0)
+        is_valid = is_valid and (board[i][source_tuple[1]].piece == None or board[i][source_tuple[1]].piece.color == other_color)
         if is_valid:
             x, y = board[i][source_tuple[1]].getCoord()
             rec = pygame.Rect(x, y, image_width, image_height)
             pygame.draw.rect(screen, (0, 0, 255), rec, 1)
-        if board[i][source_tuple[1]].piece != None and board[i][source_tuple[1]].piece.color == 0:
+        if board[i][source_tuple[1]].piece != None and board[i][source_tuple[1]].piece.color == other_color:
             is_valid = False
     pygame.display.update()
 
 def find_valid_move_pawn():
     global board, screen, source_col, source_row
-    if source_row + 1 <= 7 and board[source_col][source_row + 1].piece == None or board[source_col][source_row + 1].piece.color == 0:
-        x, y = board[source_col][source_row + 1].getCoord()
-        rec = pygame.Rect(x, y, image_width, image_height)
-        pygame.draw.rect(screen, (0, 0, 255), rec, 1)
+    if color == 1:
+        if source_row + 1 < 8 and (board[source_col][source_row + 1].piece == None or board[source_col][source_row + 1].piece.color == other_color):
+            x, y = board[source_col][source_row + 1].getCoord()
+            rec = pygame.Rect(x, y, image_width, image_height)
+            pygame.draw.rect(screen, (0, 0, 255), rec, 1)
+    elif color == 0:
+        if source_row - 1 > 0 and (board[source_col][source_row - 1].piece == None or board[source_col][source_row - 1].piece.color == other_color):
+            x, y = board[source_col][source_row - 1].getCoord()
+            rec = pygame.Rect(x, y, image_width, image_height)
+            pygame.draw.rect(screen, (0, 0, 255), rec, 1)
     pygame.display.update()
 
 def find_valid_move_bishop():
@@ -181,48 +201,48 @@ def find_valid_move_bishop():
     for i in range(source_col + 1, 8):
         row += 1
         if row < 8 and row > -1:
-            is_valid = is_valid and (board[i][row].piece == None or board[i][row].piece.color == 0)
+            is_valid = is_valid and (board[i][row].piece == None or board[i][row].piece.color == other_color)
             if is_valid:
                 x, y = board[i][row].getCoord()
                 rec = pygame.Rect(x, y, image_width, image_height)
                 pygame.draw.rect(screen, (0, 0, 255), rec, 1)
-            if board[i][row].piece != None and board[i][row].piece.color == 0:
+            if board[i][row].piece != None and board[i][row].piece.color == other_color:
                 is_valid = False
     row = source_row
     is_valid = True
     for i in range(source_col - 1, -1, -1):
         row += 1
         if row < 8 and row > -1:
-            is_valid = is_valid and (board[i][row].piece == None or board[i][row].piece.color == 0)
+            is_valid = is_valid and (board[i][row].piece == None or board[i][row].piece.color == other_color)
             if is_valid:
                 x, y = board[i][row].getCoord()
                 rec = pygame.Rect(x, y, image_width, image_height)
                 pygame.draw.rect(screen, (0, 0, 255), rec, 1)
-            if board[i][row].piece != None and board[i][row].piece.color == 0:
+            if board[i][row].piece != None and board[i][row].piece.color == other_color:
                 is_valid = False
     row = source_row
     is_valid = True
     for i in range(source_col + 1, 8):
         row -= 1
         if row < 8 and row > -1:
-            is_valid = is_valid and (board[i][row].piece == None or board[i][row].piece.color == 0)
+            is_valid = is_valid and (board[i][row].piece == None or board[i][row].piece.color == other_color)
             if is_valid:
                 x, y = board[i][row].getCoord()
                 rec = pygame.Rect(x, y, image_width, image_height)
                 pygame.draw.rect(screen, (0, 0, 255), rec, 1)
-            if board[i][row].piece != None and board[i][row].piece.color == 0:
+            if board[i][row].piece != None and board[i][row].piece.color == other_color:
                 is_valid = False
     row = source_row
     is_valid = True
     for i in range(source_col - 1, -1, -1):
         row -= 1
         if row < 8 and row > -1:
-            is_valid = is_valid and (board[i][row].piece == None or board[i][row].piece.color == 0)
+            is_valid = is_valid and (board[i][row].piece == None or board[i][row].piece.color == other_color)
             if is_valid:
                 x, y = board[i][row].getCoord()
                 rec = pygame.Rect(x, y, image_width, image_height)
                 pygame.draw.rect(screen, (0, 0, 255), rec, 1)
-            if board[i][row].piece != None and board[i][row].piece.color == 0:
+            if board[i][row].piece != None and board[i][row].piece.color == other_color:
                 is_valid = False
     pygame.display.update()
 
@@ -230,42 +250,42 @@ def find_valid_move_bishop():
 def find_valid_move_knight():
     global board, screen, source_col, source_row
     if source_col - 1 < 8 and source_col - 1 > -1 and source_row + 2 < 8 and source_row + 2 > -1:
-        if board[source_col - 1][source_row + 2].piece == None or board[source_col - 1][source_row + 2].piece.color == 0:
+        if board[source_col - 1][source_row + 2].piece == None or board[source_col - 1][source_row + 2].piece.color == other_color:
             x, y = board[source_col - 1][source_row + 2].getCoord()
             rec = pygame.Rect(x, y, image_width, image_height)
             pygame.draw.rect(screen, (0, 0, 255), rec, 1)
     if source_col - 1 < 8 and source_col - 1 > -1 and source_row - 2 < 8 and source_row - 2 > -1:
-        if board[source_col - 1][source_row - 2].piece == None or board[source_col - 1][source_row - 2].piece.color == 0:
+        if board[source_col - 1][source_row - 2].piece == None or board[source_col - 1][source_row - 2].piece.color == other_color:
             x, y = board[source_col - 1][source_row - 2].getCoord()
             rec = pygame.Rect(x, y, image_width, image_height)
             pygame.draw.rect(screen, (0, 0, 255), rec, 1)
     if source_col - 2 < 8 and source_col - 2 > -1 and source_row + 1 < 8 and source_row + 1 > -1:
-        if board[source_col - 2][source_row + 1].piece == None or board[source_col - 2][source_row + 1].piece.color == 0:
+        if board[source_col - 2][source_row + 1].piece == None or board[source_col - 2][source_row + 1].piece.color == other_color:
             x, y = board[source_col - 2][source_row + 1].getCoord()
             rec = pygame.Rect(x, y, image_width, image_height)
             pygame.draw.rect(screen, (0, 0, 255), rec, 1)
     if source_col - 2 < 8 and source_col - 2 > -1 and source_row - 1 < 8 and source_row - 1 > -1:
-        if board[source_col - 2][source_row - 1].piece == None or board[source_col - 2][source_row - 1].piece.color == 0:
+        if board[source_col - 2][source_row - 1].piece == None or board[source_col - 2][source_row - 1].piece.color == other_color:
             x, y = board[source_col - 2][source_row - 1].getCoord()
             rec = pygame.Rect(x, y, image_width, image_height)
             pygame.draw.rect(screen, (0, 0, 255), rec, 1)
     if source_col + 1 < 8 and source_col + 1 > -1 and source_row + 2 < 8 and source_row + 2 > -1:
-        if board[source_col + 1][source_row + 2].piece == None or board[source_col + 1][source_row + 2].piece.color == 0:
+        if board[source_col + 1][source_row + 2].piece == None or board[source_col + 1][source_row + 2].piece.color == other_color:
             x, y = board[source_col + 1][source_row + 2].getCoord()
             rec = pygame.Rect(x, y, image_width, image_height)
             pygame.draw.rect(screen, (0, 0, 255), rec, 1)
     if source_col + 1 < 8 and source_col + 1 > -1 and source_row - 2 < 8 and source_row - 2 > -1:
-        if board[source_col + 1][source_row - 2].piece == None or board[source_col + 1][source_row - 2].piece.color == 0:
+        if board[source_col + 1][source_row - 2].piece == None or board[source_col + 1][source_row - 2].piece.color == other_color:
             x, y = board[source_col + 1][source_row - 2].getCoord()
             rec = pygame.Rect(x, y, image_width, image_height)
             pygame.draw.rect(screen, (0, 0, 255), rec, 1)
     if source_col + 2 < 8 and source_col + 2 > -1 and source_row + 1 < 8 and source_row + 1 > -1:
-        if board[source_col + 2][source_row + 1].piece == None or board[source_col + 2][source_row + 1].piece.color == 0:
+        if board[source_col + 2][source_row + 1].piece == None or board[source_col + 2][source_row + 1].piece.color == other_color:
             x, y = board[source_col + 2][source_row + 1].getCoord()
             rec = pygame.Rect(x, y, image_width, image_height)
             pygame.draw.rect(screen, (0, 0, 255), rec, 1)
     if source_col + 2 < 8 and source_col + 2 > -1 and source_row - 1 < 8 and source_row - 1 > -1:
-        if board[source_col + 2][source_row - 1].piece == None or board[source_col + 2][source_row - 1].piece.color == 0:
+        if board[source_col + 2][source_row - 1].piece == None or board[source_col + 2][source_row - 1].piece.color == other_color:
             x, y = board[source_col + 2][source_row - 1].getCoord()
             rec = pygame.Rect(x, y, image_width, image_height)
             pygame.draw.rect(screen, (0, 0, 255), rec, 1)
@@ -276,41 +296,41 @@ def find_valid_move_king():
     col, row = (source_col, source_row)
     if col - 1 < 8 and col - 1 > -1:
         if row - 1 < 8 and row - 1 > -1:
-            if board[col - 1][row - 1].piece == None or board[col - 1][row - 1].piece.color == 0:
+            if board[col - 1][row - 1].piece == None or board[col - 1][row - 1].piece.color == other_color:
                 x, y = board[col - 1][row - 1].getCoord()
                 rec = pygame.Rect(x, y, image_width, image_height)
                 pygame.draw.rect(screen, (0, 0, 255), rec, 1)
-        if board[col - 1][row].piece == None or board[col - 1][row].piece.color == 0:
+        if board[col - 1][row].piece == None or board[col - 1][row].piece.color == other_color:
             x, y = board[col - 1][row].getCoord()
             rec = pygame.Rect(x, y, image_width, image_height)
             pygame.draw.rect(screen, (0, 0, 255), rec, 1)
         if row - 1 < 8 and row + 1 > -1:
-            if board[col - 1][row + 1].piece == None or board[col - 1][row + 1].piece.color == 0:
+            if board[col - 1][row + 1].piece == None or board[col - 1][row + 1].piece.color == other_color:
                 x, y = board[col - 1][row + 1].getCoord()
                 rec = pygame.Rect(x, y, image_width, image_height)
                 pygame.draw.rect(screen, (0, 0, 255), rec, 1)
     if row - 1 < 8 and row - 1 > -1:
-        if board[col][row - 1].piece == None or board[col][row - 1].piece.color == 0:
+        if board[col][row - 1].piece == None or board[col][row - 1].piece.color == other_color:
             x, y = board[col][row - 1].getCoord()
             rec = pygame.Rect(x, y, image_width, image_height)
             pygame.draw.rect(screen, (0, 0, 255), rec, 1)
     if row + 1 < 8 and row + 1 > -1:
-        if board[col][row + 1].piece == None or board[col][row + 1].piece.color == 0:
+        if board[col][row + 1].piece == None or board[col][row + 1].piece.color == other_color:
             x, y = board[col][row + 1].getCoord()
             rec = pygame.Rect(x, y, image_width, image_height)
             pygame.draw.rect(screen, (0, 0, 255), rec, 1)
     if col + 1 < 8 and col + 1 > -1:
         if row - 1 < 8 and row - 1 > -1:
-            if board[col + 1][row - 1].piece == None or board[col + 1][row - 1].piece.color == 0:
+            if board[col + 1][row - 1].piece == None or board[col + 1][row - 1].piece.color == other_color:
                 x, y = board[col + 1][row - 1].getCoord()
                 rec = pygame.Rect(x, y, image_width, image_height)
                 pygame.draw.rect(screen, (0, 0, 255), rec, 1)
-        if board[col + 1][row].piece == None or board[col + 1][row].piece.color == 0:
+        if board[col + 1][row].piece == None or board[col + 1][row].piece.color == other_color:
             x, y = board[col + 1][row].getCoord()
             rec = pygame.Rect(x, y, image_width, image_height)
             pygame.draw.rect(screen, (0, 0, 255), rec, 1)
         if row - 1 < 8 and row + 1 > -1:
-            if board[col + 1][row + 1].piece == None or board[col + 1][row + 1].piece.color == 0:
+            if board[col + 1][row + 1].piece == None or board[col + 1][row + 1].piece.color == other_color:
                 x, y = board[col + 1][row + 1].getCoord()
                 rec = pygame.Rect(x, y, image_width, image_height)
                 pygame.draw.rect(screen, (0, 0, 255), rec, 1)
@@ -321,87 +341,87 @@ def find_valid_move_queen():
     source_tuple = (source_col, source_row)
     is_valid = True
     for i in range (source_row + 1, 8):
-        is_valid = is_valid and (board[source_tuple[0]][i].piece == None or board[source_tuple[0]][i].piece.color == 0)
+        is_valid = is_valid and (board[source_tuple[0]][i].piece == None or board[source_tuple[0]][i].piece.color == other_color)
         if is_valid:
             x, y = board[source_tuple[0]][i].getCoord()
             rec = pygame.Rect(x, y, image_width, image_height)
             pygame.draw.rect(screen, (0, 0, 255), rec, 1)
-        if board[source_tuple[0]][i].piece != None and board[source_tuple[0]][i].piece.color == 0:
+        if board[source_tuple[0]][i].piece != None and board[source_tuple[0]][i].piece.color == other_color:
             is_valid = False
     is_valid = True
     for i in range (source_row - 1, -1, -1):
-        is_valid = is_valid and (board[source_tuple[0]][i].piece == None or board[source_tuple[0]][i].piece.color == 0)
+        is_valid = is_valid and (board[source_tuple[0]][i].piece == None or board[source_tuple[0]][i].piece.color == other_color)
         if is_valid:
             x, y = board[source_tuple[0]][i].getCoord()
             rec = pygame.Rect(x, y, image_width, image_height)
             pygame.draw.rect(screen, (0, 0, 255), rec, 1)
-        if board[source_tuple[0]][i].piece != None and board[source_tuple[0]][i].piece.color == 0:
+        if board[source_tuple[0]][i].piece != None and board[source_tuple[0]][i].piece.color == other_color:
             is_valid = False
     is_valid = True
     for i in range (source_col + 1, 8):
-        is_valid = is_valid and (board[i][source_tuple[1]].piece == None or board[i][source_tuple[1]].piece.color == 0)
+        is_valid = is_valid and (board[i][source_tuple[1]].piece == None or board[i][source_tuple[1]].piece.color == other_color)
         if is_valid:
             x, y = board[i][source_tuple[1]].getCoord()
             rec = pygame.Rect(x, y, image_width, image_height)
             pygame.draw.rect(screen, (0, 0, 255), rec, 1)
-        if board[i][source_tuple[1]].piece != None and board[i][source_tuple[1]].piece.color == 0:
+        if board[i][source_tuple[1]].piece != None and board[i][source_tuple[1]].piece.color == other_color:
             is_valid = False
     is_valid = True
     for i in range (source_col - 1, -1, -1):
-        is_valid = is_valid and (board[i][source_tuple[1]].piece == None or board[i][source_tuple[1]].piece.color == 0)
+        is_valid = is_valid and (board[i][source_tuple[1]].piece == None or board[i][source_tuple[1]].piece.color == other_color)
         if is_valid:
             x, y = board[i][source_tuple[1]].getCoord()
             rec = pygame.Rect(x, y, image_width, image_height)
             pygame.draw.rect(screen, (0, 0, 255), rec, 1)
-        if board[i][source_tuple[1]].piece != None and board[i][source_tuple[1]].piece.color == 0:
+        if board[i][source_tuple[1]].piece != None and board[i][source_tuple[1]].piece.color == other_color:
             is_valid = False
     row = source_row
     is_valid = True
     for i in range(source_col + 1, 8):
         row += 1
         if row < 8 and row > -1:
-            is_valid = is_valid and (board[i][row].piece == None or board[i][row].piece.color == 0)
+            is_valid = is_valid and (board[i][row].piece == None or board[i][row].piece.color == other_color)
             if is_valid:
                 x, y = board[i][row].getCoord()
                 rec = pygame.Rect(x, y, image_width, image_height)
                 pygame.draw.rect(screen, (0, 0, 255), rec, 1)
-            if board[i][row].piece != None and board[i][row].piece.color == 0:
+            if board[i][row].piece != None and board[i][row].piece.color == other_color:
                 is_valid = False
     row = source_row
     is_valid = True
     for i in range(source_col - 1, -1, -1):
         row += 1
         if row < 8 and row > -1:
-            is_valid = is_valid and (board[i][row].piece == None or board[i][row].piece.color == 0)
+            is_valid = is_valid and (board[i][row].piece == None or board[i][row].piece.color == other_color)
             if is_valid:
                 x, y = board[i][row].getCoord()
                 rec = pygame.Rect(x, y, image_width, image_height)
                 pygame.draw.rect(screen, (0, 0, 255), rec, 1)
-            if board[i][row].piece != None and board[i][row].piece.color == 0:
+            if board[i][row].piece != None and board[i][row].piece.color == other_color:
                 is_valid = False
     row = source_row
     is_valid = True
     for i in range(source_col + 1, 8):
         row -= 1
         if row < 8 and row > -1:
-            is_valid = is_valid and (board[i][row].piece == None or board[i][row].piece.color == 0)
+            is_valid = is_valid and (board[i][row].piece == None or board[i][row].piece.color == other_color)
             if is_valid:
                 x, y = board[i][row].getCoord()
                 rec = pygame.Rect(x, y, image_width, image_height)
                 pygame.draw.rect(screen, (0, 0, 255), rec, 1)
-            if board[i][row].piece != None and board[i][row].piece.color == 0:
+            if board[i][row].piece != None and board[i][row].piece.color == other_color:
                 is_valid = False
     row = source_row
     is_valid = True
     for i in range(source_col - 1, -1, -1):
         row -= 1
         if row < 8 and row > -1:
-            is_valid = is_valid and (board[i][row].piece == None or board[i][row].piece.color == 0)
+            is_valid = is_valid and (board[i][row].piece == None or board[i][row].piece.color == other_color)
             if is_valid:
                 x, y = board[i][row].getCoord()
                 rec = pygame.Rect(x, y, image_width, image_height)
                 pygame.draw.rect(screen, (0, 0, 255), rec, 1)
-            if board[i][row].piece != None and board[i][row].piece.color == 0:
+            if board[i][row].piece != None and board[i][row].piece.color == other_color:
                 is_valid = False
     pygame.display.update()
 
@@ -460,29 +480,18 @@ def handle_click():
         col, row = convert_x_y_to_col_row(mouse[0], mouse[1])
         has_piece = board[col][row].piece != None
 
-        if has_piece and not selected and board[col][row].piece.color == 1:
+        if has_piece and not selected and board[col][row].piece.color == color:
             selected = True
             select(col, row)
             find_valid_moves(col, row)
-        elif not has_piece and selected or has_piece and board[col][row].piece.color == 0:
+        elif not has_piece and selected or selected and has_piece and board[col][row].piece.color == other_color:
             selected = False
             place_piece(col, row)
         elif selected and row == source_row and col == source_col:
             selected = False
             update_board()
-        elif has_piece and board[col][row].piece.color == 1:
+        elif has_piece and board[col][row].piece.color == color:
             update_board()
             selected = True
             select(col, row)
             find_valid_moves(col, row)
-
-
-init_board()
-
-blnExitGame = False
-while not blnExitGame:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            blnExitGame = True
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            handle_click()
