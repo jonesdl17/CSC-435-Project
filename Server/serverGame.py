@@ -13,6 +13,8 @@ class serverGame():
 
         print("ServerGame Started")
         gameBoard = serverBoard()
+        gameBoard.init_pieces()
+        gameBoard.listBoard()
         self.player1 = player1
         self.player2 = player2
         self.mode = mode
