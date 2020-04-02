@@ -3,7 +3,7 @@ from serverBoard import *
 
 
 class serverGame():
-    gameBoard = 0
+    gameBoard = None
     charToInt = (())
     player1 = 0
     player2 = 0
@@ -12,9 +12,9 @@ class serverGame():
     def __init__(self, mode, player1, player2):
 
         print("ServerGame Started")
-        gameBoard = serverBoard()
-        gameBoard.init_pieces()
-        gameBoard.listBoard()
+        self.gameBoard = serverBoard()
+        self.gameBoard.init_pieces()
+        self.gameBoard.listBoard()
         self.player1 = player1
         self.player2 = player2
         self.mode = mode
@@ -22,29 +22,32 @@ class serverGame():
 
     
     #Checks validMoves using the moves file
-    def checkValidMove(self, piece ,start, end):
-        startTuple, endTuple = (start[0],start[1]), (end[0],end[1])
+    def checkValidMove(self, piece ,startTuple, endTuple):
+        is_valid = False
         if(piece == "Pawn"):
-            return True
-            return is_valid_move_pawn(self.board,startTuple, endTuple)
+            is_valid = is_valid_move_pawn(self.gameBoard.board, startTuple, endTuple)
         elif(piece == "Rook"):
-            return is_valid_move_rook(self.board, startTuple, endTuple)
+            is_valid =  is_valid_move_rook(self.gameBoard.board, startTuple, endTuple)
         elif(piece == "Bishop"):
-            return is_valid_move_bishop(self.board, startTuple, endTuple)
+            is_valid =  is_valid_move_bishop(self.gameBoard.board, startTuple, endTuple)
         elif(piece == "Knight"):
-            return is_valid_move_bishop(self.board, startTuple, endTuple)
+            is_valid =  is_valid_move_knight(self.gameBoard.board, startTuple, endTuple)
         elif(piece == "Queen"):
-            return is_valid_move_queen(self.board, startTuple, endTuple)
+            is_valid =  is_valid_move_queen(self.gameBoard.board, startTuple, endTuple)
         elif(piece == "King"):
-            return is_valid_move_king(self.board, startTuple, endTuple)
-        else:
-            print("Invalid Piece")
-            return False
+            is_valid =  is_valid_move_king(self.gameBoard.board, startTuple, endTuple)
+        
+        #if valid move, move the pieces in the board array.
+        if is_valid:
+            self.gameBoard.place_piece(startTuple[0], startTuple[1], endTuple[0], endTuple[1])
+
+        return is_valid
 
     #Move the piece on the board.
     def movePiece(self, piece, start, end):
-        print(serverGame.checkValidMove(piece,start,end))
-        if(True):
+        valid_move = serverGame.checkValidMove(self, piece,start,end)
+        print(valid_move)
+        if(valid_move):
             #MovePieceCode
             return True
         else:
@@ -54,12 +57,12 @@ class serverGame():
     #Checks to see if recv data is from the correct person
     #returns True/False and alternates turns if it is from the right person
     def checkValidColor(self, color, whiteTurn, blackTurn):
-        if whiteTurn & (color == "White"):
+        if whiteTurn & (color == "White" or color == '1'):
             print("Yes")
             whiteTurn = False
             blackTurn = True
         else:
-            if blackTurn & (color == "Black"):
+            if blackTurn & (color == "Black" or color == '0'):
                 whiteTurn = True
                 blackTurn = False
             else:

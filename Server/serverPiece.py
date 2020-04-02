@@ -1,4 +1,3 @@
-import pygame
 #I think it oragnizes the pieces better, so we don't have to import a ton of imports on board
 #1 = white pieces, -1 = Black pieces
 

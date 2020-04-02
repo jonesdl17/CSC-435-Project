@@ -55,8 +55,7 @@ class serverBoard():
         self.board[7][6].changeHasPiece(Pawn(0))
         print("Pieces has been placed")
 
-    def place_piece(target_col, target_row):
-        global source_col, source_row, selected
+    def place_piece(self, source_col, source_row, target_col, target_row):
         if self.board[source_col][source_row].piece.name == "Pawn":
                 self.board[target_col][target_row].piece = self.board[source_col][source_row].piece
                 self.board[source_col][source_row].piece = None

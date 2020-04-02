@@ -47,8 +47,10 @@ def start_Game(gameMode, connection_white, connection_black):
         validColor, whiteTurn, blackTurn = game.checkValidColor(move[0], whiteTurn, blackTurn)
         #If color check is passed then the valid piece movement is checked.
         if(validColor):
-            validMove = game.movePiece(move[1], move[2], move[3])
-            if(validMove):
+            start_tuple = (int(move[2]), int(move[3]))
+            end_tuple = (int(move[4]), int(move[5]))
+            validMove = game.movePiece(move[1], start_tuple, end_tuple)
+            if(not validMove):
                 #if(inCheck())
                     #data = 1 + recData
                     #connection_white.send(data.encode("utf-8"))
@@ -57,12 +59,15 @@ def start_Game(gameMode, connection_white, connection_black):
             #connection_white.send(data.encode("utf-8"))
             #connection_black.send(data.encode("utf-8"))
             # else:
-                data = "2, Invalid Move"
-                mostRecentPlayer.send(data.encode("UTF-8"))
+                '''data = "2, Invalid Move"
+                mostRecentPlayer.send(data.encode("UTF-8"))'''
+            else:
+                connection_white.send(recData.encode('utf-8'))
+                connection_black.send(recData.encode('utf-8'))
 
-        else:
+        '''else:
             data = "2, Invalid Color Assignment"
-            mostRecentPlayer.send(data.encode("utf-8"))
+            mostRecentPlayer.send(data.encode("utf-8"))'''
 
     
 PORT = 13456
