@@ -2,6 +2,7 @@ import pygame
 from Piece import *
 from Square import *
 from moves import *
+import threading
 screen = None
 board_image = None
 width = 600
@@ -18,23 +19,55 @@ source_row = 0
 color = 0
 other_color = 0
 
-
+receiving_thread = None
+server_response = []
 
 #have to initialize it this way because FUCK PYTHON!
 board = []
 for i in range(8):
     board.append([0] * 8)
 
+def update_board():
+    global board
+    board_image = pygame.image.load("board.jpg")
+    board_image = pygame.transform.smoothscale(board_image, (width, height))
+    screen.blit(board_image, (0, 0))
+    pygame.display.update() 
+    for row in range(8):
+        for col in range(8):
+            if board[col][row].piece != None:
+                image = pygame.image.load(board[col][row].piece.image)
+                image = pygame.transform.smoothscale(image, (image_width, image_height))
+                screen.blit(image, (board[col][row].xAxis, board[col][row].yAxis))
+
+    pygame.display.update()
 
 def init_game(gameMode):
-    global color, other_color
-    from client import get_color
+    global color, other_color, receiving_thread, server_response, board
+    from client import get_color, soc, receive_from_server
     color = get_color(gameMode)
     other_color = 0 if color == 1 else 1  
     init_board()  
 
     blnExitGame = False
     while not blnExitGame:
+        if receiving_thread == None:
+            receiving_thread = threading.Thread(target=receive_from_server, args=(server_response, ))
+            receiving_thread.start()
+        elif len(server_response) != 0:
+            receiving_thread = None
+            recData = server_response.pop(0)
+            print('Received from server ', recData)
+            move = recData.split(",")
+            source_col = int(move[2])
+            source_row = int(move[3])
+            target_col = int(move[4])
+            target_row = int(move[5])
+
+            board[target_col][target_row].piece = board[source_col][source_row].piece
+            board[source_col][source_row].piece = None
+            update_board()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 blnExitGame = True
@@ -115,20 +148,6 @@ def init_pieces():
     board[7][6].changeHasPiece(Pawn(0))
     update_board()
 
-def update_board():
-    global board
-    board_image = pygame.image.load("board.jpg")
-    board_image = pygame.transform.smoothscale(board_image, (width, height))
-    screen.blit(board_image, (0, 0))
-    pygame.display.update() 
-    for row in range(8):
-        for col in range(8):
-            if board[col][row].piece != None:
-                image = pygame.image.load(board[col][row].piece.image)
-                image = pygame.transform.smoothscale(image, (image_width, image_height))
-                screen.blit(image, (board[col][row].xAxis, board[col][row].yAxis))
-
-    pygame.display.update()
 
 def select(col, row):
     global source_col, source_row
@@ -441,35 +460,29 @@ def find_valid_moves(col, row):
         find_valid_move_queen()
 
 def place_piece(target_col, target_row):
-    global source_col, source_row, selected
+    global source_col, source_row, selected, color, board
+    is_valid_move = False
     if board[source_col][source_row].piece.name == "Pawn":
-        if is_valid_move_pawn(board, (source_col, source_row), (target_col, target_row)):
-            board[target_col][target_row].piece = board[source_col][source_row].piece
-            board[source_col][source_row].piece = None
+        is_valid_move = is_valid_move_pawn(board, (source_col, source_row), (target_col, target_row))
     elif board[source_col][source_row].piece.name == "Rook":
-        if is_valid_move_rook(board, (source_col, source_row), (target_col, target_row)):
-            board[target_col][target_row].piece = board[source_col][source_row].piece
-            board[source_col][source_row].piece = None
+        is_valid_move = is_valid_move_rook(board, (source_col, source_row), (target_col, target_row))
     elif board[source_col][source_row].piece.name == "Bishop":
-        if is_valid_move_bishop(board, (source_col, source_row), (target_col, target_row)):
-            board[target_col][target_row].piece = board[source_col][source_row].piece
-            board[source_col][source_row].piece = None
+        is_valid_move = is_valid_move_bishop(board, (source_col, source_row), (target_col, target_row))
     elif board[source_col][source_row].piece.name == "Knight":
-        if is_valid_move_knight(board, (source_col, source_row), (target_col, target_row)):
-            board[target_col][target_row].piece = board[source_col][source_row].piece
-            board[source_col][source_row].piece = None
+        is_valid_move = is_valid_move_knight(board, (source_col, source_row), (target_col, target_row))
     elif board[source_col][source_row].piece.name == "King":
-        if is_valid_move_king(board, (source_col, source_row), (target_col, target_row)):
-            board[target_col][target_row].piece = board[source_col][source_row].piece
-            board[source_col][source_row].piece = None
+        is_valid_move = is_valid_move_king(board, (source_col, source_row), (target_col, target_row))
     elif board[source_col][source_row].piece.name == "Queen":
-        if is_valid_move_queen(board, (source_col, source_row), (target_col, target_row)):
-            board[target_col][target_row].piece = board[source_col][source_row].piece
-            board[source_col][source_row].piece = None
+        is_valid_move = is_valid_move_queen(board, (source_col, source_row), (target_col, target_row))
+
+    if is_valid_move:
+        from client import send_to_server
+        piece_name = board[source_col][source_row].piece.name
+        data = str(color) + ',' + piece_name + ',' + str(source_col) + ',' + str(source_row) + ',' + str(target_col) + ',' + str(target_row)
+        send_to_server(data)
     else:
-        board[target_col][target_row].piece = board[source_col][source_row].piece
-        board[source_col][source_row].piece = None
-    update_board()
+        update_board()
+ 
     
 
 def handle_click():

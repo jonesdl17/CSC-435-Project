@@ -7,13 +7,12 @@ HOST = "127.0.0.1"
 server_address = (HOST, PORT)
 
 def get_color(gameMode):
-    return connect_to_server(gameMode)
+    return init_connect_to_server(gameMode)
 
-def connect_to_server(gameMode):
+def init_connect_to_server(gameMode):
     global soc
     #Connect to the server socket
     soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    
     soc.connect(server_address)
 
     try:
@@ -29,5 +28,22 @@ def connect_to_server(gameMode):
             print("no data")
     except Exception:
         print("You either kill yourself or get killed!")
-    finally:
-        soc.close()
+
+def send_to_server(data):
+    print('trying to send')
+    global soc
+
+    print('sending %s to the sever' % (data))
+    soc.send(data.encode('utf-8'))
+
+def receive_from_server(response_lst):
+    global soc
+    try:
+        returned_data = soc.recv(1024)
+        if returned_data:
+            print(returned_data.decode('utf-8'))
+            response_lst.append(returned_data.decode('utf-8'))
+        else:
+            print("no data")
+    except Exception:
+        print("You either kill yourself or get killed!")
