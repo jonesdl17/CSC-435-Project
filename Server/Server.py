@@ -1,5 +1,6 @@
 import socket
 import threading
+import time
 from serverGame import *
 
 
@@ -27,12 +28,16 @@ def start_Game(gameMode, connection_white, connection_black):
     gameInProgress, whiteTurn, blackTurn = True, True, False
     mostRecentPlayer = connection_white
 
+    #white goes first
+    turn = '1'
+    connection_white.send(turn.encode('utf-8'))
+    connection_black.send(turn.encode('utf-8'))
 
     while gameInProgress:
+
         #While White Turn, Only recieve input from white
         if whiteTurn:
-            recData = (connection_white.recv(4096))
-            recData = recData.decode()
+            recData = (connection_white.recv(4096).decode())
             move = recData.split(",")
             mostRecentPlayer = connection_white
             print(move)
@@ -64,6 +69,14 @@ def start_Game(gameMode, connection_white, connection_black):
             else:
                 connection_white.send(recData.encode('utf-8'))
                 connection_black.send(recData.encode('utf-8'))
+                #time.sleep(1)
+                turn = ''
+                if whiteTurn:
+                    turn = '1'
+                else:
+                    turn = '0'
+                connection_white.send(turn.encode('utf-8'))
+                connection_black.send(turn.encode('utf-8'))
 
         '''else:
             data = "2, Invalid Color Assignment"
