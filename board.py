@@ -18,6 +18,7 @@ source_col = 0
 source_row = 0
 color = 0
 other_color = 0
+turn = False
 
 receiving_thread = None
 server_response = []
@@ -43,7 +44,7 @@ def update_board():
     pygame.display.update()
 
 def init_game(gameMode):
-    global color, other_color, receiving_thread, server_response, board
+    global color, other_color, receiving_thread, server_response, board, turn
     from client import get_color, soc, receive_from_server
     color = get_color(gameMode)
     other_color = 0 if color == 1 else 1  
@@ -59,14 +60,22 @@ def init_game(gameMode):
             recData = server_response.pop(0)
             print('Received from server ', recData)
             move = recData.split(",")
-            source_col = int(move[2])
-            source_row = int(move[3])
-            target_col = int(move[4])
-            target_row = int(move[5])
-
-            board[target_col][target_row].piece = board[source_col][source_row].piece
-            board[source_col][source_row].piece = None
-            update_board()
+            if len(move) == 1:
+                print('move bitch', move)
+                #telling whose turn
+                if color == int(move[0]):                 
+                    turn = True
+                    print('turn', turn)
+                else:
+                    turn = False
+            else:
+                source_col = int(move[2])
+                source_row = int(move[3])
+                target_col = int(move[4])
+                target_row = int(move[5])
+                board[target_col][target_row].piece = board[source_col][source_row].piece
+                board[source_col][source_row].piece = None
+                update_board()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -475,7 +484,7 @@ def place_piece(target_col, target_row):
     elif board[source_col][source_row].piece.name == "Queen":
         is_valid_move = is_valid_move_queen(board, (source_col, source_row), (target_col, target_row))
 
-    if is_valid_move:
+    if is_valid_move and turn:
         from client import send_to_server
         piece_name = board[source_col][source_row].piece.name
         data = str(color) + ',' + piece_name + ',' + str(source_col) + ',' + str(source_row) + ',' + str(target_col) + ',' + str(target_row)
