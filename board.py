@@ -211,12 +211,26 @@ def find_valid_move_rook():
 def find_valid_move_pawn():
     global board, screen, source_col, source_row
     if color == 1:
-        if source_row + 1 < 8 and (board[source_col][source_row + 1].piece == None or board[source_col][source_row + 1].piece.color == other_color):
+        if source_row + 2 < 8 and (board[source_col][source_row + 2].piece == None or board[source_col][source_row + 2].piece.color == other_color) and board[source_col][source_row].piece.checkFirstMove():
+            x, y = board[source_col][source_row + 2].getCoord()
+            rec = pygame.Rect(x, y, image_width, image_height)
+            pygame.draw.rect(screen, (0, 0, 255), rec, 1)
+            x, y = board[source_col][source_row + 1].getCoord()
+            rec = pygame.Rect(x, y, image_width, image_height)
+            pygame.draw.rect(screen, (0, 0, 255), rec, 1)
+        elif source_row + 1 < 8 and (board[source_col][source_row + 1].piece == None or board[source_col][source_row + 1].piece.color == other_color):
             x, y = board[source_col][source_row + 1].getCoord()
             rec = pygame.Rect(x, y, image_width, image_height)
             pygame.draw.rect(screen, (0, 0, 255), rec, 1)
     elif color == 0:
-        if source_row - 1 > 0 and (board[source_col][source_row - 1].piece == None or board[source_col][source_row - 1].piece.color == other_color):
+        if source_row - 2 < 8 and (board[source_col][source_row - 2].piece == None or board[source_col][source_row - 2].piece.color == other_color) and board[source_col][source_row].piece.checkFirstMove():
+            x, y = board[source_col][source_row - 2].getCoord()
+            rec = pygame.Rect(x, y, image_width, image_height)
+            pygame.draw.rect(screen, (0, 0, 255), rec, 1)
+            x, y = board[source_col][source_row - 1].getCoord()
+            rec = pygame.Rect(x, y, image_width, image_height)
+            pygame.draw.rect(screen, (0, 0, 255), rec, 1)
+        elif source_row - 1 > 0 and (board[source_col][source_row - 1].piece == None or board[source_col][source_row - 1].piece.color == other_color):
             x, y = board[source_col][source_row - 1].getCoord()
             rec = pygame.Rect(x, y, image_width, image_height)
             pygame.draw.rect(screen, (0, 0, 255), rec, 1)
@@ -473,6 +487,8 @@ def place_piece(target_col, target_row):
     is_valid_move = False
     if board[source_col][source_row].piece.name == "Pawn":
         is_valid_move = is_valid_move_pawn(board, (source_col, source_row), (target_col, target_row))
+        if(is_valid_move):
+            board[source_col][source_row].piece.madeFirstMove()
     elif board[source_col][source_row].piece.name == "Rook":
         is_valid_move = is_valid_move_rook(board, (source_col, source_row), (target_col, target_row))
     elif board[source_col][source_row].piece.name == "Bishop":

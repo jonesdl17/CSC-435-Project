@@ -7,7 +7,6 @@ class serverBoard():
     board = []
 
     def __init__(self):
-        print("ServerBoard Started")
         for i in range(8):
             self.board.append([0] * 8)
         for row in range(8):
@@ -18,6 +17,7 @@ class serverBoard():
         for row in range(8):
             for col in range(8):
                 print(self.board[col][row].getPiece())
+                
     def init_pieces(self):
         #initialize white pieces
         self.board[0][0].changeHasPiece(Rook(1))
@@ -59,6 +59,7 @@ class serverBoard():
         if self.board[source_col][source_row].piece.name == "Pawn":
                 self.board[target_col][target_row].piece = self.board[source_col][source_row].piece
                 self.board[source_col][source_row].piece = None
+                self.board[target_col][target_row].piece.madeFirstMove()
         elif self.board[source_col][source_row].piece.name == "Rook":
                 self.board[target_col][target_row].piece = self.board[source_col][source_row].piece
                 self.board[source_col][source_row].piece = None

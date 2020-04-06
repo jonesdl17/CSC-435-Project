@@ -57,9 +57,18 @@ class Rook(Piece):
             self.image = "./Rook-Black.png"
 
 class Pawn(Piece):
+    firstMove = True
+
     def __init__(self, color):
         super().__init__("Pawn", color)
         if color == 1:
             self.image = "./Pawn-White.png"
         else:
             self.image = "./Pawn-Black.png"
+
+    def checkFirstMove(self):
+        return self.firstMove
+
+    def madeFirstMove(self):
+        if(self.firstMove):
+            self.firstMove = False

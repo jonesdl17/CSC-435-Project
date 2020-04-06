@@ -36,5 +36,16 @@ class Rook(Piece):
         super().__init__("Rook", color)
 
 class Pawn(Piece):
+    firstMove = True
     def __init__(self, color):
         super().__init__("Pawn", color)
+
+    def checkFirstMove(self):
+        return self.firstMove
+
+    def madeFirstMove(self):
+        if(self.firstMove):
+            self.firstMove = False
+            print("Made first Move ", self.firstMove)
+
+    

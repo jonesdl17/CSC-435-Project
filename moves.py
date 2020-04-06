@@ -1,7 +1,10 @@
+from Piece import *
 def is_valid_move_pawn(board, source_tuple, target_tuple):
     is_valid = False
     is_in_board = target_tuple[0] < 8  and target_tuple[0] >= 0 and target_tuple[1] < 8 and target_tuple[1] >= 0 
-    if source_tuple[0] == target_tuple[0] and target_tuple[1] == source_tuple[1] + 1 or target_tuple[1] == source_tuple[1] - 1 and is_in_board:
+    if source_tuple[0] == target_tuple[0] and target_tuple[1] == source_tuple[1] + 2 and board[source_tuple[0]][source_tuple[1]].piece.checkFirstMove() and is_in_board or source_tuple[0] == target_tuple[0] and target_tuple[1] == source_tuple[1] - 2 and is_in_board and board[source_tuple[0]][source_tuple[1]].piece.checkFirstMove():
+        is_valid = True
+    elif source_tuple[0] == target_tuple[0] and target_tuple[1] == source_tuple[1] + 1 or source_tuple[0] == target_tuple[0] and target_tuple[1] == source_tuple[1] - 1 and is_in_board:
         is_valid = True
     return is_valid
 
