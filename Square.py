@@ -1,10 +1,11 @@
 import pygame
 width = 600
-height = 600
+height = 700
 border_distance_x = 32
 border_distance_y = 35
+board_offset_y = 100
 image_width = int((width - border_distance_x * 2)/8)
-image_height = int((height - border_distance_y * 2)/8)
+image_height = int((height - border_distance_y * 2 - board_offset_y)/8)
 #to create individual squares with own coordiantes, to if it has a piece, and the piece color and piece
 class Square():
     col = 0
@@ -20,7 +21,7 @@ class Square():
 
     def __init__(self, col, row):
         self.xAxis = col * image_width + border_distance_x
-        self.yAxis = row * image_height + border_distance_y
+        self.yAxis = row * image_height + border_distance_y + board_offset_y
         self.coordianates = (self.xAxis, self.yAxis)
 
 #getter for coordiantes

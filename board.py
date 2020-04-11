@@ -6,13 +6,14 @@ import threading
 screen = None
 board_image = None
 width = 600
-height = 600
+height = 700
+board_offset_y = 100
 border_distance_x = 32
 border_distance_y = 35
 king_piece = None
 king_piece_rect = None
 image_width = int((width - border_distance_x * 2)/8)
-image_height = int((height - border_distance_y * 2)/8)
+image_height = int((height - border_distance_y * 2 - board_offset_y)/8)
 selected = False
 source_col = 0
 source_row = 0
@@ -31,8 +32,8 @@ for i in range(8):
 def update_board():
     global board
     board_image = pygame.image.load("board.jpg")
-    board_image = pygame.transform.smoothscale(board_image, (width, height))
-    screen.blit(board_image, (0, 0))
+    board_image = pygame.transform.smoothscale(board_image, (width, height - board_offset_y))
+    screen.blit(board_image, (0, board_offset_y))
     pygame.display.update() 
     for row in range(8):
         for col in range(8):
@@ -43,9 +44,31 @@ def update_board():
 
     pygame.display.update()
 
+def write_turn():
+    global turn
+
+    pygame.display.get_surface().fill((210,180,140))
+
+    update_board()
+
+    font = pygame.font.Font('freesansbold.ttf', 20) 
+
+    if turn:
+        text = font.render('Your Turn', True, (0,0,0)) 
+    else:
+        text = font.render('Their Turn', True, (0,0,0)) 
+
+    textRect = text.get_rect()  
+
+    textRect.center = (50, 50) 
+
+    screen.blit(text, textRect)
+
+    pygame.display.update()
+
 def init_game(gameMode):
     global color, other_color, receiving_thread, server_response, board, turn
-    from client import get_color, soc, receive_from_server
+    from client import get_color, soc, receive_from_server, close_socket
     color = get_color(gameMode)
     other_color = 0 if color == 1 else 1  
     init_board()  
@@ -68,6 +91,7 @@ def init_game(gameMode):
                     print('turn', turn)
                 else:
                     turn = False
+                write_turn()
             else:
                 source_col = int(move[2])
                 source_row = int(move[3])
@@ -80,6 +104,7 @@ def init_game(gameMode):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 blnExitGame = True
+                close_socket()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 handle_click()
 
@@ -91,13 +116,18 @@ def init_board():
 
     pygame.display.init()
     screen = pygame.display.set_mode((width, height))
-    pygame.display.set_caption("Chess")
-    pygame.display.get_surface().fill((255,255,255))
+    
+    if color == 1:
+        pygame.display.set_caption("White Player")
+    else:
+        pygame.display.set_caption("Black Player")
+
+    pygame.display.get_surface().fill((210,180,140))
     pygame.display.update()
     
     board_image = pygame.image.load("board.jpg")
-    board_image = pygame.transform.smoothscale(board_image, (width, height))
-    screen.blit(board_image, (0, 0))
+    board_image = pygame.transform.smoothscale(board_image, (width, height - board_offset_y))
+    screen.blit(board_image, (0, board_offset_y))
     pygame.display.update() 
 
     init_pieces()
@@ -106,7 +136,7 @@ def convert_x_y_to_col_row(x, y):
         x -= border_distance_x
         col = int(x / image_width)
         
-        y -= border_distance_y
+        y -= border_distance_y + board_offset_y
         row = int(y / image_height)
         if row >= 8:
             row = 7

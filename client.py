@@ -47,3 +47,7 @@ def receive_from_server(response_lst):
             print("no data")
     except Exception:
         print("You either kill yourself or get killed!")
+
+def close_socket():
+    global soc
+    soc.close()
