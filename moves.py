@@ -65,7 +65,7 @@ def is_valid_move_king(board, source_tuple, target_tuple):
     is_valid = False
     is_in_board = target_tuple[0] < 8 and target_tuple[0] >= 0 and target_tuple[1] < 8 and target_tuple[1] >= 0 
     
-    if abs(target_tuple[0] - source_tuple[0]) == 1 or abs(target_tuple[1] - source_tuple[1]) == 1:
+    if is_in_board and (abs(target_tuple[0] - source_tuple[0]) == 1 or abs(target_tuple[0] - source_tuple[0]) == 0) and (abs(target_tuple[1] - source_tuple[1]) == 1 or abs(target_tuple[1] - source_tuple[1]) == 0):
         is_valid = True
     return is_valid
 

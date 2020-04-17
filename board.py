@@ -81,14 +81,11 @@ def init_game(gameMode):
         elif len(server_response) != 0:
             receiving_thread = None
             recData = server_response.pop(0)
-            print('Received from server ', recData)
             move = recData.split(",")
             if len(move) == 1:
-                print('move bitch', move)
                 #telling whose turn
                 if color == int(move[0]):                 
                     turn = True
-                    print('turn', turn)
                 else:
                     turn = False
                 write_turn()
@@ -253,14 +250,14 @@ def find_valid_move_pawn():
             rec = pygame.Rect(x, y, image_width, image_height)
             pygame.draw.rect(screen, (0, 0, 255), rec, 1)
     elif color == 0:
-        if source_row - 2 < 8 and (board[source_col][source_row - 2].piece == None or board[source_col][source_row - 2].piece.color == other_color) and board[source_col][source_row].piece.checkFirstMove():
+        if source_row - 2 > -1 and (board[source_col][source_row - 2].piece == None or board[source_col][source_row - 2].piece.color == other_color) and board[source_col][source_row].piece.checkFirstMove():
             x, y = board[source_col][source_row - 2].getCoord()
             rec = pygame.Rect(x, y, image_width, image_height)
             pygame.draw.rect(screen, (0, 0, 255), rec, 1)
             x, y = board[source_col][source_row - 1].getCoord()
             rec = pygame.Rect(x, y, image_width, image_height)
             pygame.draw.rect(screen, (0, 0, 255), rec, 1)
-        elif source_row - 1 > 0 and (board[source_col][source_row - 1].piece == None or board[source_col][source_row - 1].piece.color == other_color):
+        elif source_row - 1 > -1 and (board[source_col][source_row - 1].piece == None or board[source_col][source_row - 1].piece.color == other_color):
             x, y = board[source_col][source_row - 1].getCoord()
             rec = pygame.Rect(x, y, image_width, image_height)
             pygame.draw.rect(screen, (0, 0, 255), rec, 1)
@@ -368,41 +365,41 @@ def find_valid_move_king():
     col, row = (source_col, source_row)
     if col - 1 < 8 and col - 1 > -1:
         if row - 1 < 8 and row - 1 > -1:
-            if board[col - 1][row - 1].piece == None or board[col - 1][row - 1].piece.color == other_color:
+            if (board[col - 1][row - 1].piece == None or (board[col - 1][row - 1].piece != None and board[col - 1][row - 1].piece.color == other_color)) and not check_if_in_check(col - 1, row - 1):
                 x, y = board[col - 1][row - 1].getCoord()
                 rec = pygame.Rect(x, y, image_width, image_height)
                 pygame.draw.rect(screen, (0, 0, 255), rec, 1)
-        if board[col - 1][row].piece == None or board[col - 1][row].piece.color == other_color:
+        if (board[col - 1][row].piece == None or (board[col - 1][row].piece != None and board[col - 1][row].piece.color == other_color)) and not check_if_in_check(col - 1, row):
             x, y = board[col - 1][row].getCoord()
             rec = pygame.Rect(x, y, image_width, image_height)
             pygame.draw.rect(screen, (0, 0, 255), rec, 1)
-        if row - 1 < 8 and row + 1 > -1:
-            if board[col - 1][row + 1].piece == None or board[col - 1][row + 1].piece.color == other_color:
+        if row + 1 < 8 and row + 1 > -1:
+            if (board[col - 1][row + 1].piece == None or (board[col - 1][row + 1].piece != None and board[col - 1][row + 1].piece.color == other_color)) and not check_if_in_check(col - 1, row + 1):
                 x, y = board[col - 1][row + 1].getCoord()
                 rec = pygame.Rect(x, y, image_width, image_height)
                 pygame.draw.rect(screen, (0, 0, 255), rec, 1)
     if row - 1 < 8 and row - 1 > -1:
-        if board[col][row - 1].piece == None or board[col][row - 1].piece.color == other_color:
+        if (board[col][row - 1].piece == None or (board[col][row - 1].piece != None and board[col][row - 1].piece.color == other_color)) and not check_if_in_check(col, row - 1):
             x, y = board[col][row - 1].getCoord()
             rec = pygame.Rect(x, y, image_width, image_height)
             pygame.draw.rect(screen, (0, 0, 255), rec, 1)
     if row + 1 < 8 and row + 1 > -1:
-        if board[col][row + 1].piece == None or board[col][row + 1].piece.color == other_color:
+        if (board[col][row + 1].piece == None or (board[col][row + 1].piece != None and board[col][row + 1].piece.color == other_color)) and not check_if_in_check(col, row + 1):
             x, y = board[col][row + 1].getCoord()
             rec = pygame.Rect(x, y, image_width, image_height)
             pygame.draw.rect(screen, (0, 0, 255), rec, 1)
     if col + 1 < 8 and col + 1 > -1:
         if row - 1 < 8 and row - 1 > -1:
-            if board[col + 1][row - 1].piece == None or board[col + 1][row - 1].piece.color == other_color:
+            if (board[col + 1][row - 1].piece == None or (board[col + 1][row - 1].piece != None and board[col + 1][row - 1].piece.color == other_color)) and not check_if_in_check(col + 1, row - 1):
                 x, y = board[col + 1][row - 1].getCoord()
                 rec = pygame.Rect(x, y, image_width, image_height)
                 pygame.draw.rect(screen, (0, 0, 255), rec, 1)
-        if board[col + 1][row].piece == None or board[col + 1][row].piece.color == other_color:
+        if (board[col + 1][row].piece == None or (board[col + 1][row].piece != None and board[col + 1][row].piece.color == other_color)) and not check_if_in_check(col + 1, row):
             x, y = board[col + 1][row].getCoord()
             rec = pygame.Rect(x, y, image_width, image_height)
             pygame.draw.rect(screen, (0, 0, 255), rec, 1)
-        if row - 1 < 8 and row + 1 > -1:
-            if board[col + 1][row + 1].piece == None or board[col + 1][row + 1].piece.color == other_color:
+        if row + 1 < 8 and row + 1 > -1:
+            if (board[col + 1][row + 1].piece == None or (board[col + 1][row + 1].piece != None and board[col + 1][row + 1].piece.color == other_color)) and not check_if_in_check(col + 1, row + 1):
                 x, y = board[col + 1][row + 1].getCoord()
                 rec = pygame.Rect(x, y, image_width, image_height)
                 pygame.draw.rect(screen, (0, 0, 255), rec, 1)
@@ -537,8 +534,6 @@ def place_piece(target_col, target_row):
         send_to_server(data)
     else:
         update_board()
- 
-    
 
 def handle_click():
     global selected, source_col, source_row
@@ -563,3 +558,121 @@ def handle_click():
             selected = True
             select(col, row)
             find_valid_moves(col, row)
+
+def check_if_in_check(source_col, source_row):
+    global board
+    isInCheck = False
+    #check for pawn
+    if color == 1:
+        if source_row + 2 < 8 and board[source_col][source_row + 2].piece != None and board[source_col][source_row + 1].piece == None:
+            if board[source_col][source_row + 2].piece.color == other_color and (board[source_col][source_row + 2].piece.name == 'Pawn' and not board[source_col][source_row + 2].piece.checkFirstMove()):
+                isInCheck = True
+                print('in check: ')
+                print(source_col, source_row)
+                print(source_col, source_row + 2)
+                print()
+        if source_row + 1 < 8 and (board[source_col][source_row + 1].piece != None and board[source_col][source_row + 1].piece.color == other_color and board[source_col][source_row + 1].piece.name == 'Pawn'):
+            isInCheck = True
+            print('in check: ')
+            print(source_col, source_row)
+            print(source_col, source_row + 1)
+            print()
+    elif color == 0:
+        if source_row - 2 > -1 and board[source_col][source_row - 2].piece != None and board[source_col][source_row - 1].piece == None:
+            if board[source_col][source_row - 2].piece.color == other_color and (board[source_col][source_row - 2].piece.name == 'Pawn' and not board[source_col][source_row - 2].piece.checkFirstMove()):
+                isInCheck = True
+                print('in check: ')
+                print(source_col, source_row)
+                print(source_col, source_row - 2)
+                print()
+        if source_row - 1 > -1 and (board[source_col][source_row - 1].piece != None and board[source_col][source_row - 1].piece.color == other_color and board[source_col][source_row - 1].piece.name == 'Pawn'):
+            isInCheck = True
+            print('in check: ')
+            print(source_col, source_row)
+            print(source_col, source_row - 1)
+            print()
+
+    #check for rook
+    source_tuple = (source_col, source_row)
+    for i in range (source_row + 1, 8):
+        if board[source_tuple[0]][i].piece != None and board[source_tuple[0]][i].piece.color == other_color and (board[source_tuple[0]][i].piece.name == 'Rook' or board[source_tuple[0]][i].piece.name == 'Queen'):
+            isInCheck = True
+        elif board[source_tuple[0]][i].piece != None:
+            break
+    for i in range (source_row - 1, -1, -1):
+        if board[source_tuple[0]][i].piece != None and board[source_tuple[0]][i].piece.color == other_color and (board[source_tuple[0]][i].piece.name == 'Rook' or board[source_tuple[0]][i].piece.name == 'Queen'):
+            isInCheck = True
+        elif board[source_tuple[0]][i].piece != None:
+            break
+    for i in range (source_col + 1, 8):
+        if board[i][source_tuple[1]].piece != None and board[i][source_tuple[1]].piece.color == other_color and (board[i][source_tuple[1]].piece.name == 'Rook' or board[i][source_tuple[1]].piece.name == 'Queen'):
+            isInCheck = True
+        elif board[i][source_tuple[1]].piece != None:
+            break
+    for i in range (source_col - 1, -1, -1):
+        if board[i][source_tuple[1]].piece != None and board[i][source_tuple[1]].piece.color == other_color and (board[i][source_tuple[1]].piece.name == 'Rook' or board[i][source_tuple[1]].piece.name == 'Queen'):
+            isInCheck = True
+        elif board[i][source_tuple[1]].piece != None:
+            break
+
+    #check for bishop
+    row = source_row
+    for i in range(source_col + 1, 8):
+        row += 1
+        if row < 8 and row > -1:
+            if board[i][row].piece != None and board[i][row].piece.color == other_color and (board[i][row].piece.name == 'Bishop' or board[i][row].piece.name == 'Queen'):
+                isInCheck = True
+            elif board[i][row].piece != None:
+                break
+    row = source_row
+    for i in range(source_col - 1, -1, -1):
+        row += 1
+        if row < 8 and row > -1:
+            if board[i][row].piece != None and board[i][row].piece.color == other_color and (board[i][row].piece.name == 'Bishop' or board[i][row].piece.name == 'Queen'):
+                isInCheck = True
+            elif board[i][row].piece != None:
+                break
+    row = source_row
+    for i in range(source_col + 1, 8):
+        row -= 1
+        if row < 8 and row > -1:
+            if board[i][row].piece != None and board[i][row].piece.color == other_color and (board[i][row].piece.name == 'Bishop' or board[i][row].piece.name == 'Queen'):
+                isInCheck = True
+            elif board[i][row].piece != None:
+                break
+    row = source_row
+    for i in range(source_col - 1, -1, -1):
+        row -= 1
+        if row < 8 and row > -1:
+            if board[i][row].piece != None and board[i][row].piece.color == other_color and (board[i][row].piece.name == 'Bishop' or board[i][row].piece.name == 'Queen'):
+                isInCheck = True
+            elif board[i][row].piece != None:
+                break
+
+    #check for knight
+    if source_col - 1 < 8 and source_col - 1 > -1 and source_row + 2 < 8 and source_row + 2 > -1:
+        if board[source_col - 1][source_row + 2].piece != None and board[source_col - 1][source_row + 2].piece.color == other_color and board[source_col - 1][source_row + 2].piece.name == 'Knight':
+            isInCheck = True
+    if source_col - 1 < 8 and source_col - 1 > -1 and source_row - 2 < 8 and source_row - 2 > -1:
+        if board[source_col - 1][source_row - 2].piece != None and board[source_col - 1][source_row - 2].piece.color == other_color and board[source_col - 1][source_row - 2].piece.name == 'Knight':
+            isInCheck = True
+    if source_col - 2 < 8 and source_col - 2 > -1 and source_row + 1 < 8 and source_row + 1 > -1:
+        if board[source_col - 2][source_row + 1].piece != None and board[source_col - 2][source_row + 1].piece.color == other_color and board[source_col - 2][source_row + 1].piece.name == 'Knight':
+            isInCheck = True
+    if source_col - 2 < 8 and source_col - 2 > -1 and source_row - 1 < 8 and source_row - 1 > -1:
+        if board[source_col - 2][source_row - 1].piece != None and board[source_col - 2][source_row - 1].piece.color == other_color and board[source_col - 2][source_row - 1].piece.name == 'Knight':
+            isInCheck = True
+    if source_col + 1 < 8 and source_col + 1 > -1 and source_row + 2 < 8 and source_row + 2 > -1:
+        if board[source_col + 1][source_row + 2].piece != None and board[source_col + 1][source_row + 2].piece.color == other_color and board[source_col + 1][source_row + 2].piece.name == 'Knight':
+            isInCheck = True
+    if source_col + 1 < 8 and source_col + 1 > -1 and source_row - 2 < 8 and source_row - 2 > -1:
+        if board[source_col + 1][source_row - 2].piece != None and board[source_col + 1][source_row - 2].piece.color == other_color and board[source_col + 1][source_row - 2].piece.name == 'Knight':
+            isInCheck = True
+    if source_col + 2 < 8 and source_col + 2 > -1 and source_row + 1 < 8 and source_row + 1 > -1:
+        if board[source_col + 2][source_row + 1].piece != None and board[source_col + 2][source_row + 1].piece.color == other_color and board[source_col + 2][source_row + 1].piece.name == 'Knight':
+            isInCheck = True
+    if source_col + 2 < 8 and source_col + 2 > -1 and source_row - 1 < 8 and source_row - 1 > -1:
+        if board[source_col + 2][source_row - 1].piece != None and board[source_col + 2][source_row - 1].piece.color == other_color and board[source_col + 2][source_row - 1].piece.name == 'Knight':
+            isInCheck = True
+
+    return isInCheck

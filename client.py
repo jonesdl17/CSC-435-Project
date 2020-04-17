@@ -17,12 +17,10 @@ def init_connect_to_server(gameMode):
 
     try:
         data = gameMode
-        print('sending %d to the sever' % (data))
         soc.send(b'%d' % (data))
 
         returned_data = soc.recv(1024)
         if data:
-            print(returned_data.decode('utf-8'))
             return int(returned_data)
         else:
             print("no data")
@@ -30,10 +28,8 @@ def init_connect_to_server(gameMode):
         print("You either kill yourself or get killed!")
 
 def send_to_server(data):
-    print('trying to send')
     global soc
 
-    print('sending %s to the sever' % (data))
     soc.send(data.encode('utf-8'))
 
 def receive_from_server(response_lst):
@@ -41,7 +37,6 @@ def receive_from_server(response_lst):
     try:
         returned_data = soc.recv(1024)
         if returned_data:
-            print(returned_data.decode('utf-8'))
             response_lst.append(returned_data.decode('utf-8'))
         else:
             print("no data")
