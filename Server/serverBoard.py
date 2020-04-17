@@ -5,6 +5,8 @@ from serverSquare import *
 #initializing the board
 class serverBoard():
     board = []
+    pieces_checking_white_king = []
+    pieces_checking_black_king = []
 
     def __init__(self):
         for i in range(8):
@@ -78,9 +80,3 @@ class serverBoard():
         else:
             self.board[target_col][target_row].piece = self.board[source_col][source_row].piece
             self.board[source_col][source_row].piece = None
-
-
-
-
-
-

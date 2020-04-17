@@ -35,7 +35,7 @@ class serverGame():
         elif(piece == "Queen"):
             is_valid =  is_valid_move_queen(self.gameBoard.board, startTuple, endTuple)
         elif(piece == "King"):
-            is_valid =  is_valid_move_king(self.gameBoard.board, startTuple, endTuple)
+            is_valid =  is_valid_move_king(self.gameBoard.board, startTuple, endTuple) and not self.check_if_in_check(self.gameBoard.board[startTuple[0]][startTuple[1]].piece.color, endTuple[0], endTuple[1])
         
         #if valid move, move the pieces in the board array.
         if is_valid:
@@ -68,3 +68,123 @@ class serverGame():
             else:
                 return False, whiteTurn, blackTurn
         return True, whiteTurn, blackTurn
+
+    #checks to see if square is in check
+    def check_if_in_check(self, color, source_col, source_row):
+        board = self.gameBoard.board
+        isInCheck = False
+        other_color = 0 if color == 1 else 1
+        #check for pawn
+        if color == 1:
+            if source_row + 2 < 8 and board[source_col][source_row + 2].piece != None and board[source_col][source_row + 1].piece == None:
+                if board[source_col][source_row + 2].piece.color == other_color and (board[source_col][source_row + 2].piece.name == 'Pawn' and not board[source_col][source_row + 2].piece.checkFirstMove()):
+                    isInCheck = True
+                    print('in check: ')
+                    print(source_col, source_row)
+                    print(source_col, source_row + 2)
+                    print()
+            if source_row + 1 < 8 and (board[source_col][source_row + 1].piece != None and board[source_col][source_row + 1].piece.color == other_color and board[source_col][source_row + 1].piece.name == 'Pawn'):
+                isInCheck = True
+                print('in check: ')
+                print(source_col, source_row)
+                print(source_col, source_row + 1)
+                print()
+        elif color == 0:
+            if source_row - 2 > -1 and board[source_col][source_row - 2].piece != None and board[source_col][source_row - 1].piece == None:
+                if board[source_col][source_row - 2].piece.color == other_color and (board[source_col][source_row - 2].piece.name == 'Pawn' and not board[source_col][source_row - 2].piece.checkFirstMove()):
+                    isInCheck = True
+                    print('in check: ')
+                    print(source_col, source_row)
+                    print(source_col, source_row - 2)
+                    print()
+            if source_row - 1 > -1 and (board[source_col][source_row - 1].piece != None and board[source_col][source_row - 1].piece.color == other_color and board[source_col][source_row - 1].piece.name == 'Pawn'):
+                isInCheck = True
+                print('in check: ')
+                print(source_col, source_row)
+                print(source_col, source_row - 1)
+                print()
+
+        #check for rook
+        source_tuple = (source_col, source_row)
+        for i in range (source_row + 1, 8):
+            if board[source_tuple[0]][i].piece != None and board[source_tuple[0]][i].piece.color == other_color and (board[source_tuple[0]][i].piece.name == 'Rook' or board[source_tuple[0]][i].piece.name == 'Queen'):
+                isInCheck = True
+            elif board[source_tuple[0]][i].piece != None:
+                break
+        for i in range (source_row - 1, -1, -1):
+            if board[source_tuple[0]][i].piece != None and board[source_tuple[0]][i].piece.color == other_color and (board[source_tuple[0]][i].piece.name == 'Rook' or board[source_tuple[0]][i].piece.name == 'Queen'):
+                isInCheck = True
+            elif board[source_tuple[0]][i].piece != None:
+                break
+        for i in range (source_col + 1, 8):
+            if board[i][source_tuple[1]].piece != None and board[i][source_tuple[1]].piece.color == other_color and (board[i][source_tuple[1]].piece.name == 'Rook' or board[i][source_tuple[1]].piece.name == 'Queen'):
+                isInCheck = True
+            elif board[i][source_tuple[1]].piece != None:
+                break
+        for i in range (source_col - 1, -1, -1):
+            if board[i][source_tuple[1]].piece != None and board[i][source_tuple[1]].piece.color == other_color and (board[i][source_tuple[1]].piece.name == 'Rook' or board[i][source_tuple[1]].piece.name == 'Queen'):
+                isInCheck = True
+            elif board[i][source_tuple[1]].piece != None:
+                break
+
+        #check for bishop
+        row = source_row
+        for i in range(source_col + 1, 8):
+            row += 1
+            if row < 8 and row > -1:
+                if board[i][row].piece != None and board[i][row].piece.color == other_color and (board[i][row].piece.name == 'Bishop' or board[i][row].piece.name == 'Queen'):
+                    isInCheck = True
+                elif board[i][row].piece != None:
+                    break
+        row = source_row
+        for i in range(source_col - 1, -1, -1):
+            row += 1
+            if row < 8 and row > -1:
+                if board[i][row].piece != None and board[i][row].piece.color == other_color and (board[i][row].piece.name == 'Bishop' or board[i][row].piece.name == 'Queen'):
+                    isInCheck = True
+                elif board[i][row].piece != None:
+                    break
+        row = source_row
+        for i in range(source_col + 1, 8):
+            row -= 1
+            if row < 8 and row > -1:
+                if board[i][row].piece != None and board[i][row].piece.color == other_color and (board[i][row].piece.name == 'Bishop' or board[i][row].piece.name == 'Queen'):
+                    isInCheck = True
+                elif board[i][row].piece != None:
+                    break
+        row = source_row
+        for i in range(source_col - 1, -1, -1):
+            row -= 1
+            if row < 8 and row > -1:
+                if board[i][row].piece != None and board[i][row].piece.color == other_color and (board[i][row].piece.name == 'Bishop' or board[i][row].piece.name == 'Queen'):
+                    isInCheck = True
+                elif board[i][row].piece != None:
+                    break
+
+        #check for knight
+        if source_col - 1 < 8 and source_col - 1 > -1 and source_row + 2 < 8 and source_row + 2 > -1:
+            if board[source_col - 1][source_row + 2].piece != None and board[source_col - 1][source_row + 2].piece.color == other_color and board[source_col - 1][source_row + 2].piece.name == 'Knight':
+                isInCheck = True
+        if source_col - 1 < 8 and source_col - 1 > -1 and source_row - 2 < 8 and source_row - 2 > -1:
+            if board[source_col - 1][source_row - 2].piece != None and board[source_col - 1][source_row - 2].piece.color == other_color and board[source_col - 1][source_row - 2].piece.name == 'Knight':
+                isInCheck = True
+        if source_col - 2 < 8 and source_col - 2 > -1 and source_row + 1 < 8 and source_row + 1 > -1:
+            if board[source_col - 2][source_row + 1].piece != None and board[source_col - 2][source_row + 1].piece.color == other_color and board[source_col - 2][source_row + 1].piece.name == 'Knight':
+                isInCheck = True
+        if source_col - 2 < 8 and source_col - 2 > -1 and source_row - 1 < 8 and source_row - 1 > -1:
+            if board[source_col - 2][source_row - 1].piece != None and board[source_col - 2][source_row - 1].piece.color == other_color and board[source_col - 2][source_row - 1].piece.name == 'Knight':
+                isInCheck = True
+        if source_col + 1 < 8 and source_col + 1 > -1 and source_row + 2 < 8 and source_row + 2 > -1:
+            if board[source_col + 1][source_row + 2].piece != None and board[source_col + 1][source_row + 2].piece.color == other_color and board[source_col + 1][source_row + 2].piece.name == 'Knight':
+                isInCheck = True
+        if source_col + 1 < 8 and source_col + 1 > -1 and source_row - 2 < 8 and source_row - 2 > -1:
+            if board[source_col + 1][source_row - 2].piece != None and board[source_col + 1][source_row - 2].piece.color == other_color and board[source_col + 1][source_row - 2].piece.name == 'Knight':
+                isInCheck = True
+        if source_col + 2 < 8 and source_col + 2 > -1 and source_row + 1 < 8 and source_row + 1 > -1:
+            if board[source_col + 2][source_row + 1].piece != None and board[source_col + 2][source_row + 1].piece.color == other_color and board[source_col + 2][source_row + 1].piece.name == 'Knight':
+                isInCheck = True
+        if source_col + 2 < 8 and source_col + 2 > -1 and source_row - 1 < 8 and source_row - 1 > -1:
+            if board[source_col + 2][source_row - 1].piece != None and board[source_col + 2][source_row - 1].piece.color == other_color and board[source_col + 2][source_row - 1].piece.name == 'Knight':
+                isInCheck = True
+
+        return isInCheck
