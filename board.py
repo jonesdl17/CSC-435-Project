@@ -3,6 +3,7 @@ from Piece import *
 from Square import *
 from moves import *
 import threading
+from EndScreen import *
 screen = None
 board_image = None
 width = 600
@@ -94,6 +95,7 @@ def init_game(gameMode):
                 source_row = int(move[3])
                 target_col = int(move[4])
                 target_row = int(move[5])
+                hasKingBeenCaptured(target_col, target_row)
                 board[target_col][target_row].piece = board[source_col][source_row].piece
                 board[source_col][source_row].piece = None
                 update_board()
@@ -508,6 +510,14 @@ def find_valid_moves(col, row):
         find_valid_move_king()
     if board[col][row].piece.name == "Queen":
         find_valid_move_queen()
+def hasKingBeenCaptured(target_col, target_row):
+    global board, turn
+    es = EndScreen()
+    try:
+        if board[target_col][target_row].piece.name == "King":
+            es.displayScreen(turn, board[target_col][target_row].piece.getColor)
+    except AttributeError:
+        pass
 
 def place_piece(target_col, target_row):
     global source_col, source_row, selected, color, board
@@ -532,6 +542,7 @@ def place_piece(target_col, target_row):
         piece_name = board[source_col][source_row].piece.name
         data = str(color) + ',' + piece_name + ',' + str(source_col) + ',' + str(source_row) + ',' + str(target_col) + ',' + str(target_row)
         send_to_server(data)
+        hasKingBeenCaptured(target_col, target_row)
     else:
         update_board()
 

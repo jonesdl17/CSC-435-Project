@@ -55,9 +55,17 @@ class serverBoard():
         self.board[5][6].changeHasPiece(Pawn(0))
         self.board[6][6].changeHasPiece(Pawn(0))
         self.board[7][6].changeHasPiece(Pawn(0))
-        print("Pieces has been placed")
+
+    def hasKingBeenCaptured(self, target_col, target_row):
+        try:
+            if self.board[target_col][target_row].piece.name == "King":
+                return True
+        except AttributeError:
+            pass
 
     def place_piece(self, source_col, source_row, target_col, target_row):
+        game = False
+        game = self.hasKingBeenCaptured(target_col, target_row)
         if self.board[source_col][source_row].piece.name == "Pawn":
                 self.board[target_col][target_row].piece = self.board[source_col][source_row].piece
                 self.board[source_col][source_row].piece = None
@@ -80,3 +88,5 @@ class serverBoard():
         else:
             self.board[target_col][target_row].piece = self.board[source_col][source_row].piece
             self.board[source_col][source_row].piece = None
+
+        return game

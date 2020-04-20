@@ -37,21 +37,21 @@ class serverGame():
         elif(piece == "King"):
             is_valid =  is_valid_move_king(self.gameBoard.board, startTuple, endTuple) and not self.check_if_in_check(self.gameBoard.board[startTuple[0]][startTuple[1]].piece.color, endTuple[0], endTuple[1])
         
+        game = False
         #if valid move, move the pieces in the board array.
         if is_valid:
-            self.gameBoard.place_piece(startTuple[0], startTuple[1], endTuple[0], endTuple[1])
+            game = self.gameBoard.place_piece(startTuple[0], startTuple[1], endTuple[0], endTuple[1])
 
-        return is_valid
+        return is_valid, game
 
     #Move the piece on the board.
     def movePiece(self, piece, start, end):
-        valid_move = serverGame.checkValidMove(self, piece,start,end)
-        print(valid_move)
+        valid_move, game = serverGame.checkValidMove(self, piece,start,end)
         if(valid_move):
             #MovePieceCode
-            return True
+            return True, game
         else:
-            return False
+            return False, game
             
         
     #Checks to see if recv data is from the correct person

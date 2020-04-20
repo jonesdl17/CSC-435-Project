@@ -55,7 +55,8 @@ def start_Game(gameMode, connection_white, connection_black):
             if(validColor):
                 start_tuple = (int(move[2]), int(move[3]))
                 end_tuple = (int(move[4]), int(move[5]))
-                validMove = game.movePiece(move[1], start_tuple, end_tuple)
+                validMove, endGame = game.movePiece(move[1], start_tuple, end_tuple)
+                print(endGame)
                 if(not validMove):
                     #if(inCheck())
                         #data = 1 + recData
@@ -78,6 +79,12 @@ def start_Game(gameMode, connection_white, connection_black):
                         turn = '0'
                     connection_white.send(turn.encode('utf-8'))
                     connection_black.send(turn.encode('utf-8'))
+                if(endGame):
+                    print("Closing Game")
+                    connection_black.close()
+                    connection_white.close()
+                    gameInProgess = False
+                    return
 
             '''else:
                 data = "2, Invalid Color Assignment"
