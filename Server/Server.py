@@ -85,6 +85,13 @@ def start_Game(gameMode, connection_white, connection_black):
     except ConnectionError:
         print('connection lost')
 
+def acceptConnection(socket, connection, address):
+    try:
+        conn, addr = socket.accept()
+        connection.append(conn)
+        address.append(addr)
+    except Exception:
+        print('accept unsuccessful')
     
 PORT = 13456
 HOST = "127.0.0.1"
@@ -94,6 +101,10 @@ threads = []
 normalQueue = []
 blitzQueue = []
 
+acceptThread = None
+acceptedConn = []
+acceptedAddr = []
+
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 s.bind((HOST,PORT))
@@ -101,23 +112,34 @@ print('socket bound')
 s.listen(5)
 
 
-while True:
-    conn, addr = s.accept()
-    print('connected by: ', addr)
-    queueThread = threading.Thread(target = add_toQueue, args=(conn,))
-    threads.append(queueThread)
-    queueThread.start()
+try:
+    while True:
 
-    print("Queue_Start")
+        if acceptThread == None:
+            acceptThread = threading.Thread(target=acceptConnection, args=(s, acceptedConn, acceptedAddr, ))
+            acceptThread.start()
+        elif len(acceptedConn) != 0 and len(acceptedAddr) != 0:
+            acceptThread = None
+            conn = acceptedConn.pop(0)
+            addr = acceptedAddr.pop(0)
+            print('connected by: ', addr)
+            queueThread = threading.Thread(target = add_toQueue, args=(conn,))
+            threads.append(queueThread)
+            queueThread.start()
+            print("Queue_Start")
+        if len(normalQueue) > 1:
+            mode = 1
+            gameThread = threading.Thread(target = start_Game, args = (mode,normalQueue.pop(0), normalQueue.pop(0)))
+            threads.append(gameThread)
+            gameThread.start()
 
-    if len(normalQueue) > 1:
-        mode = 1
-        gameThread = threading.Thread(target = start_Game, args = (mode,normalQueue.pop(0), normalQueue.pop(0)))
-        threads.append(gameThread)
-        gameThread.start()
-
-    if len(blitzQueue) > 1:
-        mode = 2
-        gameThread = threading.Thread(target = start_Game, args = (mode,blitzQueue.pop(0),blitzQueue.pop(0)))
-        threads.append(gameThread)
-        gameThread.start()
+        if len(blitzQueue) > 1:
+            mode = 2
+            gameThread = threading.Thread(target = start_Game, args = (mode,blitzQueue.pop(0),blitzQueue.pop(0)))
+            threads.append(gameThread)
+            gameThread.start()
+except KeyboardInterrupt:
+    print('keyboard interrupt')
+    for conn in normalQueue:
+        conn.close()
+    s.close()
