@@ -3,8 +3,10 @@ import os
 
 
 class EndScreen():
+    running = True
     def __init__(self):
-        print ('EndScreen')
+        Ruinning = True
+        
     def displayScreen(self, turn, capturedKingColor):
         playerColor = -1
         capturedKingColor = -1

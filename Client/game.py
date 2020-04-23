@@ -16,12 +16,12 @@ pygame.display.set_caption("Chess")
 #Creating texts
 questionFont = pygame.font.Font(None, 42)
 font = pygame.font.Font(None, 32)
-txtQuestion = questionFont.render("What game mode?", True, white)
-txtNormal = font.render("Normal", True, white)
-txtBlitz = font.render("Blitz", True, white)
+txtQuestion = questionFont.render("Are you ready?", True, white)
+txtStart = font.render("Start", True, white)
+txtQuit = font.render("Quit", True, white)
 #Creating buttons
-btnNormal = pygame.draw.rect(screen,(100,100,50), (100,350,100,100))
-btnBlitz  = pygame.draw.rect(screen,(100,100,50), (350,350,100,100))
+btnStart = pygame.draw.rect(screen,(100,100,50), (100,350,100,100))
+btnQuit  = pygame.draw.rect(screen,(100,100,50), (350,350,100,100))
 
 running = True
 while running:
@@ -44,14 +44,13 @@ while running:
     if 425 >= mouse[0] >= 325 and 375 >= mouse[1] >= 345:
         pygame.draw.rect(screen, blue, ( 325, 345,100,30))
         if click[0] == 1:
-            init_game(2)
             running = False
     else:
         pygame.draw.rect(screen, red, ( 325, 345,100,30))
 
 
     screen.blit(txtQuestion, (160, 160))
-    screen.blit(txtNormal, (100,350))
-    screen.blit(txtBlitz, (350, 350))
+    screen.blit(txtStart, (100,350))
+    screen.blit(txtQuit, (350, 350))
     
     pygame.display.update()
