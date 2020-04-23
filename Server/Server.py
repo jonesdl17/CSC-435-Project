@@ -8,7 +8,10 @@ def add_toQueue(conn):
     mode = conn.recv(1024).decode()
     if mode == 1 or mode == '1':
         normalQueue.append(conn)
-        print('added to queue')
+        print('added to blitz queue')
+    elif mode == 2 or mode == '2':
+        print('added to normal queue')
+        blitzQueue.append(conn)
     else:
         print("Error adding to queue. Connection: ", conn)
 
@@ -21,7 +24,7 @@ def start_Game(gameMode, connection_white, connection_black):
         connection_white.send(b'%d' % 1)
         connection_black.send(b'%d' % 0)
         game = serverGame(gameMode, connection_white, connection_black)
-        print('game started with ')
+        print('game started')
 
         gameInProgress, whiteTurn, blackTurn = True, True, False
         mostRecentPlayer = connection_white
@@ -82,14 +85,11 @@ def start_Game(gameMode, connection_white, connection_black):
     except ConnectionError:
         print('connection lost')
 
-#Accepting connections
 def acceptConnection(socket, connection, address):
     try:
         conn, addr = socket.accept()
         connection.append(conn)
         address.append(addr)
-    except KeyboardInterrupt:
-        return
     except Exception:
         print('accept unsuccessful')
     
@@ -99,6 +99,7 @@ HOST = "127.0.0.1"
 threads = []
 
 normalQueue = []
+blitzQueue = []
 
 acceptThread = None
 acceptedConn = []
@@ -107,8 +108,8 @@ acceptedAddr = []
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 s.bind((HOST,PORT))
+print('socket bound')
 s.listen(5)
-print("Listening on " + HOST +":"+str(PORT))
 
 
 try:
@@ -131,10 +132,14 @@ try:
             gameThread = threading.Thread(target = start_Game, args = (mode,normalQueue.pop(0), normalQueue.pop(0)))
             threads.append(gameThread)
             gameThread.start()
+
+        if len(blitzQueue) > 1:
+            mode = 2
+            gameThread = threading.Thread(target = start_Game, args = (mode,blitzQueue.pop(0),blitzQueue.pop(0)))
+            threads.append(gameThread)
+            gameThread.start()
 except KeyboardInterrupt:
-    print("Keyboard Interuppt initiated")
-    print("Closing Server in 5 seconds")
+    print('keyboard interrupt')
     for conn in normalQueue:
         conn.close()
-    time.sleep(5)
     s.close()
