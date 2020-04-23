@@ -4,6 +4,7 @@ from Square import *
 from moves import *
 import threading
 from EndScreen import *
+import time
 screen = None
 board_image = None
 width = 600
@@ -45,9 +46,11 @@ def update_board():
 
     pygame.display.update()
 
+
+
+
 def write_turn():
     global turn
-
     pygame.display.get_surface().fill((210,180,140))
 
     update_board()
@@ -76,6 +79,7 @@ def init_game(gameMode):
 
     blnExitGame = False
     while not blnExitGame:
+
         if receiving_thread == None:
             receiving_thread = threading.Thread(target=receive_from_server, args=(server_response, ))
             receiving_thread.start()
@@ -240,7 +244,7 @@ def find_valid_move_rook():
 def find_valid_move_pawn():
     global board, screen, source_col, source_row
     if color == 1:
-        if source_row + 2 < 8 and (board[source_col][source_row + 2].piece == None or board[source_col][source_row + 2].piece.color == other_color) and board[source_col][source_row + 1].piece == None and board[source_col][source_row].piece.checkFirstMove():
+        if source_row + 2 < 8 and (board[source_col][source_row + 2].piece == None or board[source_col][source_row + 2].piece.color == other_color) and board[source_col][source_row].piece.checkFirstMove():
             x, y = board[source_col][source_row + 2].getCoord()
             rec = pygame.Rect(x, y, image_width, image_height)
             pygame.draw.rect(screen, (0, 0, 255), rec, 1)
@@ -252,7 +256,7 @@ def find_valid_move_pawn():
             rec = pygame.Rect(x, y, image_width, image_height)
             pygame.draw.rect(screen, (0, 0, 255), rec, 1)
     elif color == 0:
-        if source_row - 2 > -1 and (board[source_col][source_row - 2].piece == None or board[source_col][source_row - 2].piece.color == other_color) and board[source_col][source_row + 1].piece == None and board[source_col][source_row].piece.checkFirstMove():
+        if source_row - 2 > -1 and (board[source_col][source_row - 2].piece == None or board[source_col][source_row - 2].piece.color == other_color) and board[source_col][source_row].piece.checkFirstMove():
             x, y = board[source_col][source_row - 2].getCoord()
             rec = pygame.Rect(x, y, image_width, image_height)
             pygame.draw.rect(screen, (0, 0, 255), rec, 1)
@@ -510,15 +514,18 @@ def find_valid_moves(col, row):
         find_valid_move_king()
     if board[col][row].piece.name == "Queen":
         find_valid_move_queen()
+#Has the king been captured
 def hasKingBeenCaptured(target_col, target_row):
     global board, turn
-    es = EndScreen()
+    
     try:
         if board[target_col][target_row].piece.name == "King":
+            es = EndScreen()
             es.displayScreen(turn, board[target_col][target_row].piece.getColor)
     except AttributeError:
         pass
 
+#To play the piece on board and see if its a valid move
 def place_piece(target_col, target_row):
     global source_col, source_row, selected, color, board
     is_valid_move = False
@@ -545,7 +552,7 @@ def place_piece(target_col, target_row):
         hasKingBeenCaptured(target_col, target_row)
     else:
         update_board()
-
+#To handle clicks
 def handle_click():
     global selected, source_col, source_row
     mouse = pygame.mouse.get_pos()
@@ -569,7 +576,7 @@ def handle_click():
             selected = True
             select(col, row)
             find_valid_moves(col, row)
-
+#Check to see if King is in check
 def check_if_in_check(source_col, source_row):
     global board
     isInCheck = False
