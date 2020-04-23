@@ -58,16 +58,9 @@ def start_Game(gameMode, connection_white, connection_black):
                 validMove, endGame = game.movePiece(move[1], start_tuple, end_tuple)
                 print(endGame)
                 if(not validMove):
-                    #if(inCheck())
-                        #data = 1 + recData
-                        #connection_white.send(data.encode("utf-8"))
-                    #connection_black.send(data.encode("utf-8"))
-                #els:
-                #connection_white.send(data.encode("utf-8"))
-                #connection_black.send(data.encode("utf-8"))
-                # else:
-                    '''data = "2, Invalid Move"
-                    mostRecentPlayer.send(data.encode("UTF-8"))'''
+                    #Because when checking the color validity changes the turn, if the move is invalid, swap the turns back.
+                    whiteTurn = not whiteTurn
+                    blackTurn = not blackTurn
                 else:
                     connection_white.send(recData.encode('utf-8'))
                     connection_black.send(recData.encode('utf-8'))
