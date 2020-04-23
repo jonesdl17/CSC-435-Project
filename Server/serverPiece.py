@@ -46,6 +46,5 @@ class Pawn(Piece):
     def madeFirstMove(self):
         if(self.firstMove):
             self.firstMove = False
-            print("Made first Move ", self.firstMove)
 
     

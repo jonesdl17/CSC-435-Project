@@ -1,5 +1,6 @@
 import pygame
 import os
+import sys
 
 
 class EndScreen():
@@ -21,10 +22,12 @@ class EndScreen():
         pygame.display.set_caption("Chess")
         #Creating texts
         Font = pygame.font.Font(None, 42)
+        font = pygame.font.Font(None, 32)
         txtWin = Font.render("Congratulations!", True, white)
         txtWin2 = Font.render("You Have Won!", True, white)
         txtLost = Font.render("Defeat!", True, white)
         txtLost2 = Font.render("Better Luck Next Time!", True, white)
+        txtQuit = font.render("Quit", True, white)
 
         screen.fill(black)
         running = True
@@ -41,7 +44,18 @@ class EndScreen():
             else:
                 screen.blit(txtWin, (160,160))
                 screen.blit(txtWin2, (160,250))
+            pygame.draw.rect(screen, red, ( 325, 345,100,30))
 
+            mouse = pygame.mouse.get_pos()
+            click = pygame.mouse.get_pressed()
+            if 425 >= mouse[0] >= 325 and 375 >= mouse[1] >= 345:
+                pygame.draw.rect(screen, blue, ( 325, 345,100,30))
+                if click[0] == 1:
+                    running = False
+                    sys.exit()
+            else:
+                pygame.draw.rect(screen, red, ( 325, 345,100,30))
+            screen.blit(txtQuit, (350, 350))
 
     
             pygame.display.update()

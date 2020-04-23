@@ -256,7 +256,7 @@ def find_valid_move_pawn():
             rec = pygame.Rect(x, y, image_width, image_height)
             pygame.draw.rect(screen, (0, 0, 255), rec, 1)
     elif color == 0:
-        if source_row + 2 < 8 and (board[source_col][source_row + 2].piece == None or board[source_col][source_row + 2].piece.color == other_color) and board[source_col][source_row + 1].piece == None and board[source_col][source_row].piece.checkFirstMove():
+        if source_row - 2 < 8 and (board[source_col][source_row - 2].piece == None or board[source_col][source_row - 2].piece.color == other_color) and board[source_col][source_row - 1].piece == None and board[source_col][source_row].piece.checkFirstMove():
             x, y = board[source_col][source_row - 2].getCoord()
             rec = pygame.Rect(x, y, image_width, image_height)
             pygame.draw.rect(screen, (0, 0, 255), rec, 1)

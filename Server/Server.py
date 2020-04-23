@@ -8,21 +8,17 @@ def add_toQueue(conn):
     mode = conn.recv(1024).decode()
     if mode == 1 or mode == '1':
         normalQueue.append(conn)
-        print('added to queue')
     else:
         print("Error adding to queue. Connection: ", conn)
 
-    print('Queue size: ', len(normalQueue))
 
-def start_Game(gameMode, connection_white, connection_black):
+def start_Game(connection_white, connection_black):
     try:
         recData = 0
-        print('starting game with mode: ', gameMode)
         connection_white.send(b'%d' % 1)
         connection_black.send(b'%d' % 0)
-        game = serverGame(gameMode, connection_white, connection_black)
-        print('game started with ')
-
+        game = serverGame(connection_white, connection_black)
+        print("Starting Game")
         gameInProgress, whiteTurn, blackTurn = True, True, False
         mostRecentPlayer = connection_white
 
@@ -38,14 +34,13 @@ def start_Game(gameMode, connection_white, connection_black):
                 recData = (connection_white.recv(4096).decode())
                 move = recData.split(",")
                 mostRecentPlayer = connection_white
-                print(move)
                 
             #While blackTurn, only recieve input from black
             if blackTurn:
                 recData = (connection_black.recv(4096).decode())
                 move = recData.split(",")
                 mostRecentPlayer = connection_black
-                print(move)
+
             #Check to see if the move recieved from correct color is from correct assigned color
             validColor, whiteTurn, blackTurn = game.checkValidColor(move[0], whiteTurn, blackTurn)
             #If color check is passed then the valid piece movement is checked.
@@ -53,7 +48,6 @@ def start_Game(gameMode, connection_white, connection_black):
                 start_tuple = (int(move[2]), int(move[3]))
                 end_tuple = (int(move[4]), int(move[5]))
                 validMove, endGame = game.movePiece(move[1], start_tuple, end_tuple)
-                print(endGame)
                 if(not validMove):
                     #Because when checking the color validity changes the turn, if the move is invalid, swap the turns back.
                     whiteTurn = not whiteTurn
@@ -125,12 +119,11 @@ try:
             queueThread = threading.Thread(target = add_toQueue, args=(conn,))
             threads.append(queueThread)
             queueThread.start()
-            print("Queue_Start")
         if len(normalQueue) > 1:
-            mode = 1
-            gameThread = threading.Thread(target = start_Game, args = (mode,normalQueue.pop(0), normalQueue.pop(0)))
+            gameThread = threading.Thread(target = start_Game, args = (normalQueue.pop(0), normalQueue.pop(0)))
             threads.append(gameThread)
             gameThread.start()
+            
 except KeyboardInterrupt:
     print("Keyboard Interuppt initiated")
     print("Closing Server in 5 seconds")

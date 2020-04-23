@@ -7,17 +7,13 @@ class serverGame():
     charToInt = (())
     player1 = 0
     player2 = 0
-    mode = 0
 
-    def __init__(self, mode, player1, player2):
-
-        print("ServerGame Started")
+    #Initlizing pieces
+    def __init__(self, player1, player2):
         self.gameBoard = serverBoard()
         self.gameBoard.init_pieces()
-        self.gameBoard.listBoard()
         self.player1 = player1
         self.player2 = player2
-        self.mode = mode
 
 
     
@@ -58,7 +54,6 @@ class serverGame():
     #returns True/False and alternates turns if it is from the right person
     def checkValidColor(self, color, whiteTurn, blackTurn):
         if whiteTurn & (color == "White" or color == '1'):
-            print("Yes")
             whiteTurn = False
             blackTurn = True
         else:
@@ -186,5 +181,4 @@ class serverGame():
         if source_col + 2 < 8 and source_col + 2 > -1 and source_row - 1 < 8 and source_row - 1 > -1:
             if board[source_col + 2][source_row - 1].piece != None and board[source_col + 2][source_row - 1].piece.color == other_color and board[source_col + 2][source_row - 1].piece.name == 'Knight':
                 isInCheck = True
-
         return isInCheck

@@ -1,7 +1,7 @@
 import pygame
 from board import init_game
 
-blitzMode = False
+
 #Declaring variables
 #declaring dimensions and colors
 width, height = 600, 600

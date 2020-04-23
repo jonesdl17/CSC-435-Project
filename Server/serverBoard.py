@@ -56,13 +56,14 @@ class serverBoard():
         self.board[6][6].changeHasPiece(Pawn(0))
         self.board[7][6].changeHasPiece(Pawn(0))
 
+    #Check if the targeted spot is where a king is at
     def hasKingBeenCaptured(self, target_col, target_row):
         try:
             if self.board[target_col][target_row].piece.name == "King":
                 return True
         except AttributeError:
             pass
-
+    #place the piece
     def place_piece(self, source_col, source_row, target_col, target_row):
         game = False
         game = self.hasKingBeenCaptured(target_col, target_row)
