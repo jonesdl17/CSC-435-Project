@@ -88,7 +88,7 @@ def acceptConnection(socket, connection, address):
         print('accept unsuccessful')
     
 PORT = 13456
-HOST = "127.0.0.1"
+HOST = "0.0.0.0"
 
 threads = []
 
