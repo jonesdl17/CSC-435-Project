@@ -1,5 +1,6 @@
 import socket
 import time
+import sys
 
 soc = None
 PORT = 13456
@@ -13,8 +14,13 @@ def init_connect_to_server(gameMode):
     global soc
     #Connect to the server socket
     soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    soc.connect(server_address)
-
+    try:
+        soc.connect(server_address)
+    except Exception:
+        print("Cannot Connect to ", server_address)
+        print("Closing in 5 Seconds")
+        time.sleep(5)
+        sys.exit()
     try:
         data = gameMode
         soc.send(b'%d' % (data))
