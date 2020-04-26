@@ -14,9 +14,11 @@ To run the client.py, you will need to install the pygame library on your machin
 You will need two instances running in order to start a game.
 If you want to run the game on a different machine than your server go in the client.py file in the client folder and change the ip address.
 
-***Note: Old File Explaination***
-Old Files folder contains pervious ideas/code/images we expiermented with.
+***Note: Old File Explanation***
+Old Files folder contains previous ideas/code/images we experimented with.
 Files with piece names, we condensed into one file to have a more neat server/client folder.
 Countdown contains code for the idea of having a countdown(scraped idea)
-ServerTest Code to see if the server are recieving/sending the correct codes.
+ServerTest Code to see if the server are receiving/sending the correct codes.
+
+
 
